@@ -3,13 +3,13 @@
 require_once("../csvtobdd.php");
 $dao = new DAO();
 $dao->connexion();
-var_dump($_POST);
-
+// var_dump($_POST);
+// var_dump($_POST['nom_auteur']);
 if ($_POST) {
     $dao->ajoutLivre();
     $dao->getAuteursbyName($_POST['nom_auteur']);
 $dao->getGenreByName($_POST['genre']);
-
+var_dump($dao->getAuteursbyName($_POST['nom_auteur']));
 }
 
 

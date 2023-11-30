@@ -75,8 +75,8 @@ class DAO
 
     function ajoutLivre()
     {
-       
-        var_dump($_POST['nom_auteur']);
+
+
 
 
         $nom_auteur = $_POST['nom_auteur'];
@@ -84,39 +84,40 @@ class DAO
         $titreLivre = $_POST['titre_livre'];
         $dateParution = $_POST['date_parution'];
         $nombrePages = $_POST['nombrePage'];
-
+        // Array.prototype.toString()
 
         if (isset($_POST['btn_ajouter'])) {
 
-            var_dump(count($this->getAuteursByName($_POST['nom_auteur'])));
-            var_dump(count($this->getAuteursByName($_POST['genre'])));
+            // var_dump(count($this->getAuteursByName($_POST['nom_auteur'])));
+            // var_dump(count($this->getAuteursByName($_POST['genre'])));
+            // var_dump($nom_auteur);
+            var_dump($this->getAuteursByName($_POST['nom_auteur']));
 
-
-            if ($this->getAuteursByName($_POST['nom_auteur']) != $nom_auteur) {
-                $sql = "INSERT INTO auteurs (`id_auteur`, `nom_auteur`) VALUES (NULL, ' $nom_auteur ')  ";
-                $sql1 = "INSERT INTO livres (`id_livre`, `titre_livre`, `date_parution`,  `nombrePage`) VALUES (NULL, '" . $titreLivre . "', '" . $dateParution . "', '" . $nombrePages . "' )";
-                $sql3 = "INSERT INTO genres (`id_genre`, `nom_genre`) VALUES (NULL, '" . $genre . "' )";
+            if (count($this->getAuteursByName($_POST['nom_auteur'])) == 0) {
+                $sql = "INSERT INTO auteurs (`id_auteur`, `nom_auteur`) VALUES (NULL, '$nom_auteur')  ";
+                $sql1 = "INSERT INTO livres (`id_livre`, `titre_livre`, `date_parution`,  `nombrePage`) VALUES (NULL, '".$titreLivre."', '".$dateParution."', '".$nombrePages."' )";
+                $sql3 = "INSERT INTO genres (`id_genre`, `nom_genre`) VALUES (NULL, '".$genre."' )";
                 $this->connect->query($sql);
                 $this->connect->query($sql1);
                 $this->connect->query($sql3);
                 // header('location:ajoutlivre.php');
                 print("Livre ajouté1");
-            } elseif ($this->getGenreByName($_POST['genre']) != $genre) {
-                $sql = "INSERT INTO auteurs (`id_auteur`, `nom_auteur`) VALUES (NULL, ' $nom_auteur ')  ";
-                $sql1 = "INSERT INTO livres (`id_livre`, `titre_livre`, `date_parution`,  `nombrePage`) VALUES (NULL, '" . $titreLivre . "', '" . $dateParution . "', '" . $nombrePages . "' )";
+            } elseif (count($this->getGenreByName($_POST['genre'])) == 0) {
+                $sql = "INSERT INTO auteurs (`id_auteur`, `nom_auteur`) VALUES (NULL, '$nom_auteur')  ";
+                $sql1 = "INSERT INTO livres (`id_livre`, `titre_livre`, `date_parution`,  `nombrePage`) VALUES (NULL, '".$titreLivre."', '".$dateParution."', '".$nombrePages."' )";
                 $sql3 = "INSERT INTO genres (`id_genre`, `nom_genre`) VALUES (NULL, '" . $genre . "' )";
                 $this->connect->query($sql);
                 $this->connect->query($sql1);
                 $this->connect->query($sql3);
                 // header('location:ajoutlivre.php');
                 print("Livre ajouté2");
-            } elseif ($this->getAuteursByName($_POST['nom_auteur']) == $genre) {
-                $sql1 = "INSERT INTO livres (`id_livre`, `titre_livre`, `date_parution`,  `nombrePage`) VALUES (NULL, '" . $titreLivre . "', '" . $dateParution . "', '" . $nombrePages . "' )";
-                $sql3 = "INSERT INTO genres (`id_genre`, `nom_genre`) VALUES (NULL, '" . $genre . "' )";
+            } elseif (($this->getAuteursByName($_POST['nom_auteur'])) != 0) {
+                $sql1 = "INSERT INTO livres (`id_livre`, `titre_livre`, `date_parution`,  `nombrePage`) VALUES (NULL, '" . $titreLivre . "', '" . $dateParution . "', '".$nombrePages . "' )";
+                $sql3 = "INSERT INTO genres (`id_genre`, `nom_genre`) VALUES (NULL, '" . $genre. "' )";
                 $this->connect->query($sql1);
                 $this->connect->query($sql3);
                 print("Livre ajouté3");
-            } elseif ($this->getGenreByName($_POST['genre']) == $nom_auteur) {
+            } elseif (($this->getGenreByName($_POST['genre'])) != 0) {
                 $sql = "INSERT INTO auteurs (`id_auteur`, `nom_auteur`) VALUES (NULL, '  $nom_auteur  ') ";
                 $sql1 = "INSERT INTO livres (`id_livre`, `titre_livre`, `date_parution`,  `nombrePage`) VALUES (NULL, '" . $titreLivre . "', '" . $dateParution . "', '" . $nombrePages . "' )";
                 $this->connect->query($sql);
