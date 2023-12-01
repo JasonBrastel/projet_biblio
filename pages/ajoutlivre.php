@@ -8,11 +8,12 @@ $dao->connexion();
 if ($_POST) {
     $dao->ajoutLivre();
     $dao->getAuteursbyName($_POST['nom_auteur']);
-$dao->getGenreByName($_POST['genre']);
-var_dump($dao->getAuteursbyName($_POST['nom_auteur']));
+    $dao->getGenreByName($_POST['genre']);
+    var_dump($dao->getAuteursbyName($_POST['nom_auteur']));
+    $dao->getIsbn($_POST['isbn']);
+
 }
-
-
+$selectGenre = $dao->getGenre();
 
 ?>
 
@@ -20,6 +21,7 @@ var_dump($dao->getAuteursbyName($_POST['nom_auteur']));
 
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,7 +31,7 @@ var_dump($dao->getAuteursbyName($_POST['nom_auteur']));
 <header>
 
 
-<h1> AJOUT DE LIVRES </h1>
+    <h1> AJOUT DE LIVRES </h1>
 
 </header>
 
@@ -37,21 +39,38 @@ var_dump($dao->getAuteursbyName($_POST['nom_auteur']));
 
 
 
-<form method="POST">
+    <form method="POST">
 
 
-<input type="text" name="titre_livre" placeholder="Titre du livre" />
-<input type="text" name="nom_auteur" placeholder="Nom de l'auteur" />
-<input type="text" name="date_parution" placeholder="Date de parution" />
-<input type="text" name="nombrePage" placeholder="Nombre de pages" />
-<input type="text" name="long_description" placeholder="Description longue" />
-<input type="text" name="short_description" placeholder="Description courte" />
-<input type="text" name="genre" placeholder="Genre" />
+        <input type="text" name="titre_livre" placeholder="Titre du livre" required />
+        <input type="text" name="isbn" placeholder="ISBN" required />
+        <input type="text" name="nom_auteur" placeholder="Nom de l'auteur" required/>
 
+                <datalist ><?php foreach ($dao->getAuteursbyName($_POST['nom_auteur'])as$row){?> 
+                <option value="<?php print $row['id_auteur'];?>" name="<?php print $row['id_auteur'];?>"><?php print $row['nom_auteur'];?></option>
+            
+            <?php } ?>
+            </datalist>
+          
 
-<button name="btn_ajouter" type="submit">Ajouter</button>
+        <input type="date" name="date_parution" name="trip-start" value="" />
+        <input type="text" name="nombrePage" placeholder="Nombre de pages" />
+        <input type="text" name="long_description" placeholder="Description longue" />
+        <input type="text" name="short_description" placeholder="Description courte" />
 
-</form>
+        <select name="genre">
+
+            <?php foreach ($selectGenre as $livre) {?>
+
+            <option value="<?php print $livre["id_genre"];  ?>"><?php print $livre["nom_genre"];?> </option>
+
+        <?php } ?>
+
+        </select>
+
+        <button name="btn_ajouter" type="submit">Ajouter</button>
+
+    </form>
 
 
 </body>
@@ -63,4 +82,5 @@ var_dump($dao->getAuteursbyName($_POST['nom_auteur']));
 
 
 </footer>
+
 </html>

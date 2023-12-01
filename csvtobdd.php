@@ -56,18 +56,31 @@ class DAO
         }
     }
 
+    function getIsbn($isbn){
+
+        $sql="SELECT isbn FROM `livres` WHERE isbn LIKE '".$isbn."'";
+        return $this->getResultat($sql);
+        var_dump($sql);
+    }
+
+
+    function getGenre(){
+
+        $sql="SELECT * FROM genres ";
+        return $this->getResultat($sql);
+    }
 
     function getAuteursByName($name)
     {
-        $sql = "SELECT nom_auteur FROM `auteurs` WHERE nom_auteur LIKE '" . $name . "';";
-        var_dump($sql);
+        $sql = "SELECT nom_auteur, id_auteur FROM `auteurs` WHERE nom_auteur LIKE '".$name."';";
+       
         return $this->getResultat($sql);
     }
 
     function getGenreByName($name)
     {
 
-        $sql = "SELECT nom_genre FROM `genres` WHERE nom_genre LIKE '" . $name . "';";
+        $sql = "SELECT nom_genre FROM `genres` WHERE nom_genre LIKE '".$name."';";
         return $this->getResultat($sql);
     }
 
@@ -75,58 +88,51 @@ class DAO
 
     function ajoutLivre()
     {
-
-
-
-
         $nom_auteur = $_POST['nom_auteur'];
         $genre = $_POST['genre'];
         $titreLivre = $_POST['titre_livre'];
         $dateParution = $_POST['date_parution'];
         $nombrePages = $_POST['nombrePage'];
+        $isbn = $_POST['isbn'];
         // Array.prototype.toString()
 
+        var_dump (count($this->getIsbn(($_POST['isbn']))));
+
+
         if (isset($_POST['btn_ajouter'])) {
-
-            // var_dump(count($this->getAuteursByName($_POST['nom_auteur'])));
-            // var_dump(count($this->getAuteursByName($_POST['genre'])));
-            // var_dump($nom_auteur);
-            var_dump($this->getAuteursByName($_POST['nom_auteur']));
-
+        var_dump("premier if");
             if (count($this->getAuteursByName($_POST['nom_auteur'])) == 0) {
-                $sql = "INSERT INTO auteurs (`id_auteur`, `nom_auteur`) VALUES (NULL, '$nom_auteur')  ";
-                $sql1 = "INSERT INTO livres (`id_livre`, `titre_livre`, `date_parution`,  `nombrePage`) VALUES (NULL, '".$titreLivre."', '".$dateParution."', '".$nombrePages."' )";
-                $sql3 = "INSERT INTO genres (`id_genre`, `nom_genre`) VALUES (NULL, '".$genre."' )";
+                $sql = "INSERT INTO auteurs (`id_auteur`,`nom_auteur`) VALUES (NULL,'$nom_auteur')";
+                $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`auteur_id`,`id_genre`) VALUES (NULL,'".$titreLivre."','".$isbn."','".$dateParution."','".$nombrePages."', (SELECT id_auteur FROM auteurs WHERE nom_auteur LIKE $nom_auteur ;),  '".$_POST['genre']."')";    
                 $this->connect->query($sql);
                 $this->connect->query($sql1);
-                $this->connect->query($sql3);
-                // header('location:ajoutlivre.php');
-                print("Livre ajouté1");
-            } elseif (count($this->getGenreByName($_POST['genre'])) == 0) {
-                $sql = "INSERT INTO auteurs (`id_auteur`, `nom_auteur`) VALUES (NULL, '$nom_auteur')  ";
-                $sql1 = "INSERT INTO livres (`id_livre`, `titre_livre`, `date_parution`,  `nombrePage`) VALUES (NULL, '".$titreLivre."', '".$dateParution."', '".$nombrePages."' )";
-                $sql3 = "INSERT INTO genres (`id_genre`, `nom_genre`) VALUES (NULL, '" . $genre . "' )";
-                $this->connect->query($sql);
+                print("Livre ajouté1");   
+                header('location:ajoutlivre.php');
+                
+
+            } elseif (count($this->getIsbn(($_POST['isbn']))) == 0) {
+                $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`id_genre`) VALUES (NULL,'".$titreLivre."','".$isbn."','".$dateParution."','".$nombrePages."', '".$_POST['genre']."')";
                 $this->connect->query($sql1);
-                $this->connect->query($sql3);
-                // header('location:ajoutlivre.php');
                 print("Livre ajouté2");
-            } elseif (($this->getAuteursByName($_POST['nom_auteur'])) != 0) {
-                $sql1 = "INSERT INTO livres (`id_livre`, `titre_livre`, `date_parution`,  `nombrePage`) VALUES (NULL, '" . $titreLivre . "', '" . $dateParution . "', '".$nombrePages . "' )";
-                $sql3 = "INSERT INTO genres (`id_genre`, `nom_genre`) VALUES (NULL, '" . $genre. "' )";
+                header('location:ajoutlivre.php');
+          } elseif (count($this->getIsbn(($_POST['isbn']))) != 0) {
+               
+            print("Le livre existe deja dans la BDD");
+         }
+
+            elseif (count($this->getAuteursByName($_POST['nom_auteur'])) != 0) {
+                $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`id_genre`) VALUES (NULL,'".$titreLivre."','".$isbn."','".$dateParution."','".$nombrePages."', '".$_POST['genre']."')";
                 $this->connect->query($sql1);
-                $this->connect->query($sql3);
+                header('location:ajoutlivre.php');
                 print("Livre ajouté3");
-            } elseif (($this->getGenreByName($_POST['genre'])) != 0) {
-                $sql = "INSERT INTO auteurs (`id_auteur`, `nom_auteur`) VALUES (NULL, '  $nom_auteur  ') ";
-                $sql1 = "INSERT INTO livres (`id_livre`, `titre_livre`, `date_parution`,  `nombrePage`) VALUES (NULL, '" . $titreLivre . "', '" . $dateParution . "', '" . $nombrePages . "' )";
-                $this->connect->query($sql);
-                $this->connect->query($sql1);
-                print("Livre ajouté4");
-            }
-        }
+
+
+            }   
+        }     
+
     }
 }
+
 
 /*
 		function de lecture du fichier csv
