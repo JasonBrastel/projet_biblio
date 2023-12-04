@@ -39,6 +39,12 @@ class DAO
         }
     }
 
+    /* méthode pour fermer la connexion à la base de données */
+	public function disconnect()
+	{
+		$this->connect = null;
+	}
+
     public function getResultat($requete)
     {
 
@@ -109,27 +115,38 @@ class DAO
         if (isset($_POST['btn_ajouter'])) {
        
             if (count($this->getAuteursByName($_POST['nom_auteur'])) == 0) {
+
                 $sql = "INSERT INTO auteurs (`id_auteur`,`nom_auteur`) VALUES (NULL,'$nom_auteur')";
                 $this->connect->query($sql);
-                $last_id = $this->connect->lastInsertId();
-                $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`auteur_id`,`id_genre`) VALUES (NULL,'".$titreLivre."','".$isbn."','".$dateParution."','".$nombrePages."','".$last_id."','".$_POST['genre']."')";    
+                $last_id_auteur = $this->connect->lastInsertId();
+
+                $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`auteur_id`,`id_genre`) VALUES (NULL,'".$titreLivre."','".$isbn."','".$dateParution."','".$nombrePages."','".$last_id_auteur."','".$_POST['genre']."')";    
                 $this->connect->query($sql1);
-                $sql2="INSERT INTO livre_auteur (`id_auteur`) VALUES ('".$last_id."')";
-               
-           
-                $this->connect->query($sql2);
-            
-                header('location:ajoutlivre.php');
+
+                $last_id_livre = $this->connect->lastInsertId();
+
                 
+
+                $sql4="INSERT INTO livre_auteur (`id_livre`,`id_auteur`) VALUES ('".$last_id_livre."','".$last_id_auteur."')";
+                $this->connect->query($sql4);
+                $sql3="INSERT INTO livre_genre (`id_livre`,`id_genre`) VALUES ('".$last_id_livre."','".$genre."')";
+                $this->connect->query($sql3);
+
+                header('location:ajoutlivre.php');
 
             } elseif (count($this->getIsbn(($_POST['isbn']))) == 0) {
                 $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`id_genre`) VALUES (NULL,'".$titreLivre."','".$isbn."','".$dateParution."','".$nombrePages."', '".$_POST['genre']."')";
                 $this->connect->query($sql1);
                 header('location:ajoutlivre.php');
+
+
+
+
           } elseif (count($this->getIsbn(($_POST['isbn']))) != 0) {
-               
             print("Le livre existe deja dans la BDD");
          }
+
+
 
             elseif (count($this->getAuteursByName($_POST['nom_auteur'])) != 0) {
                 $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`id_genre`) VALUES (NULL,'".$titreLivre."','".$isbn."','".$dateParution."','".$nombrePages."', '".$_POST['genre']."')";
@@ -140,51 +157,7 @@ class DAO
         }     
 
     }
+
+    
 }
 
-
-/*
-		function de lecture du fichier csv
-		en paramètre le nom du fichier à lire (chemin)
-	*/
-function readCsv($filename)
-{
-    $datas = array();
-    //on ouvre le fichier en lecture
-    if (($handle = fopen($filename, "r")) !== FALSE) {
-
-        //on lit le fichier ligne par ligne
-        while (($datas = fgetcsv($handle, 1000, ",")) !== FALSE) {
-
-
-            //on ajoute la ligne à un tableau php
-            print_r($datas);
-        }
-
-
-        fclose($handle);
-    }
-
-
-    return $datas;
-}
-
-// //on fait la jonction avec le fichier DAO
-// require_once("csvtobdd.php");
-//     $dao = new DAO();
-//     $dao->connexion();
-//     $author="";
-//     $remplir = $dao->remplirAuteurs($author);
-
-
-
-// $json=json_decode(file_get_contents("books.json"));
-
-// 	foreach($json as $book) {
-// 		print $book->title;
-// 		foreach($book->authors as $author) {
-
-
-//             print $remplir;
-// 		}
-// 	}

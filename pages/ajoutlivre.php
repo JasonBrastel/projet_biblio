@@ -78,7 +78,7 @@ $selectAuteur = $dao-> getAuteurDatalist();
 
 
 
-
+<?php $dao->disconnect() ?>
 </footer>
 
 </html>
