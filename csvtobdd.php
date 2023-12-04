@@ -70,6 +70,15 @@ class DAO
         return $this->getResultat($sql);
     }
 
+
+    function getAuteurDatalist(){
+
+        $sql = "SELECT nom_auteur, id_auteur FROM `auteurs` ;";
+       
+        return $this->getResultat($sql);
+
+    }
+
     function getAuteursByName($name)
     {
         $sql = "SELECT nom_auteur, id_auteur FROM `auteurs` WHERE nom_auteur LIKE '".$name."';";
@@ -94,26 +103,28 @@ class DAO
         $dateParution = $_POST['date_parution'];
         $nombrePages = $_POST['nombrePage'];
         $isbn = $_POST['isbn'];
-        // Array.prototype.toString()
 
-        var_dump (count($this->getIsbn(($_POST['isbn']))));
-
+        
 
         if (isset($_POST['btn_ajouter'])) {
-        var_dump("premier if");
+       
             if (count($this->getAuteursByName($_POST['nom_auteur'])) == 0) {
                 $sql = "INSERT INTO auteurs (`id_auteur`,`nom_auteur`) VALUES (NULL,'$nom_auteur')";
-                $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`auteur_id`,`id_genre`) VALUES (NULL,'".$titreLivre."','".$isbn."','".$dateParution."','".$nombrePages."', (SELECT id_auteur FROM auteurs WHERE nom_auteur LIKE $nom_auteur ;),  '".$_POST['genre']."')";    
                 $this->connect->query($sql);
+                $last_id = $this->connect->lastInsertId();
+                $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`auteur_id`,`id_genre`) VALUES (NULL,'".$titreLivre."','".$isbn."','".$dateParution."','".$nombrePages."','".$last_id."','".$_POST['genre']."')";    
                 $this->connect->query($sql1);
-                print("Livre ajouté1");   
+                $sql2="INSERT INTO livre_auteur (`id_auteur`) VALUES ('".$last_id."')";
+               
+           
+                $this->connect->query($sql2);
+            
                 header('location:ajoutlivre.php');
                 
 
             } elseif (count($this->getIsbn(($_POST['isbn']))) == 0) {
                 $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`id_genre`) VALUES (NULL,'".$titreLivre."','".$isbn."','".$dateParution."','".$nombrePages."', '".$_POST['genre']."')";
                 $this->connect->query($sql1);
-                print("Livre ajouté2");
                 header('location:ajoutlivre.php');
           } elseif (count($this->getIsbn(($_POST['isbn']))) != 0) {
                
@@ -124,8 +135,6 @@ class DAO
                 $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`id_genre`) VALUES (NULL,'".$titreLivre."','".$isbn."','".$dateParution."','".$nombrePages."', '".$_POST['genre']."')";
                 $this->connect->query($sql1);
                 header('location:ajoutlivre.php');
-                print("Livre ajouté3");
-
 
             }   
         }     

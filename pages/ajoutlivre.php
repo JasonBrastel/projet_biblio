@@ -11,9 +11,11 @@ if ($_POST) {
     $dao->getGenreByName($_POST['genre']);
     var_dump($dao->getAuteursbyName($_POST['nom_auteur']));
     $dao->getIsbn($_POST['isbn']);
+   
 
 }
-$selectGenre = $dao->getGenre();
+$selectGenre = $dao-> getGenre();
+$selectAuteur = $dao-> getAuteurDatalist();
 
 ?>
 
@@ -30,39 +32,35 @@ $selectGenre = $dao->getGenre();
 
 <header>
 
-
     <h1> AJOUT DE LIVRES </h1>
 
 </header>
 
 <body>
 
-
-
     <form method="POST">
-
 
         <input type="text" name="titre_livre" placeholder="Titre du livre" required />
         <input type="text" name="isbn" placeholder="ISBN" required />
-        <input type="text" name="nom_auteur" placeholder="Nom de l'auteur" required/>
+        <input type="text" list="choix_auteur" name="nom_auteur" placeholder="Nom de l'auteur" required/>
 
-                <datalist ><?php foreach ($dao->getAuteursbyName($_POST['nom_auteur'])as$row){?> 
-                <option value="<?php print $row['id_auteur'];?>" name="<?php print $row['id_auteur'];?>"><?php print $row['nom_auteur'];?></option>
+                <datalist id ="choix_auteur">
+                    <?php foreach ($selectAuteur as $row){?> 
+                <option value="<?php print $row['nom_auteur'];?>" ><?php print $row['nom_auteur'];?></option>
             
             <?php } ?>
             </datalist>
           
-
-        <input type="date" name="date_parution" name="trip-start" value="" />
-        <input type="text" name="nombrePage" placeholder="Nombre de pages" />
+        <input type="date" name="date_parution" name="trip-start" value="" required/>
+        <input type="text" name="nombrePage" placeholder="Nombre de pages"required/>
         <input type="text" name="long_description" placeholder="Description longue" />
         <input type="text" name="short_description" placeholder="Description courte" />
 
-        <select name="genre">
+        <select name="genre" >
 
             <?php foreach ($selectGenre as $livre) {?>
 
-            <option value="<?php print $livre["id_genre"];  ?>"><?php print $livre["nom_genre"];?> </option>
+            <option value="<?php print $livre["id_genre"]?>"><?php print $livre["nom_genre"]?> </option>
 
         <?php } ?>
 
