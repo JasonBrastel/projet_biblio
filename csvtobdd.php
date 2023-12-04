@@ -1,10 +1,6 @@
 <?php
-
-
 class DAO
 {
-
-
     /* Paramètres de connexion à la base de données 
 	Dans l'idéal, il faudrait écrire les getters et setters correspondants pour pouvoir en modifier les valeurs
 	au cas où notre serveur change
@@ -110,7 +106,6 @@ class DAO
         $nombrePages = $_POST['nombrePage'];
         $isbn = $_POST['isbn'];
 
-        
 
         if (isset($_POST['btn_ajouter'])) {
        
@@ -125,39 +120,31 @@ class DAO
 
                 $last_id_livre = $this->connect->lastInsertId();
 
-                
-
                 $sql4="INSERT INTO livre_auteur (`id_livre`,`id_auteur`) VALUES ('".$last_id_livre."','".$last_id_auteur."')";
                 $this->connect->query($sql4);
                 $sql3="INSERT INTO livre_genre (`id_livre`,`id_genre`) VALUES ('".$last_id_livre."','".$genre."')";
                 $this->connect->query($sql3);
 
+                //$sql5="INSERT INTO stock (`LIVRE`) VALUES ('".$_POST['nombre_livre']."')";"
+
                 header('location:ajoutlivre.php');
 
-            } elseif (count($this->getIsbn(($_POST['isbn']))) == 0) {
+                } elseif (count($this->getIsbn(($_POST['isbn']))) == 0) {
                 $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`id_genre`) VALUES (NULL,'".$titreLivre."','".$isbn."','".$dateParution."','".$nombrePages."', '".$_POST['genre']."')";
                 $this->connect->query($sql1);
                 header('location:ajoutlivre.php');
 
+                } elseif (count($this->getIsbn(($_POST['isbn']))) != 0) {
+                print("Le livre existe deja dans la BDD");
+                }
 
-
-
-          } elseif (count($this->getIsbn(($_POST['isbn']))) != 0) {
-            print("Le livre existe deja dans la BDD");
-         }
-
-
-
-            elseif (count($this->getAuteursByName($_POST['nom_auteur'])) != 0) {
+                elseif (count($this->getAuteursByName($_POST['nom_auteur'])) != 0) {
                 $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`id_genre`) VALUES (NULL,'".$titreLivre."','".$isbn."','".$dateParution."','".$nombrePages."', '".$_POST['genre']."')";
                 $this->connect->query($sql1);
                 header('location:ajoutlivre.php');
 
             }   
         }     
-
     }
-
-    
 }
 

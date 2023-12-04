@@ -19,8 +19,6 @@ $selectAuteur = $dao-> getAuteurDatalist();
 
 ?>
 
-
-
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -47,9 +45,8 @@ $selectAuteur = $dao-> getAuteurDatalist();
                 <datalist id ="choix_auteur">
                     <?php foreach ($selectAuteur as $row){?> 
                 <option value="<?php print $row['nom_auteur'];?>" ><?php print $row['nom_auteur'];?></option>
-            
-            <?php } ?>
-            </datalist>
+                <?php } ?>
+                </datalist>
           
         <input type="date" name="date_parution" name="trip-start" value="" required/>
         <input type="text" name="nombrePage" placeholder="Nombre de pages"required/>
@@ -57,26 +54,16 @@ $selectAuteur = $dao-> getAuteurDatalist();
         <input type="text" name="short_description" placeholder="Description courte" />
 
         <select name="genre" >
-
             <?php foreach ($selectGenre as $livre) {?>
-
             <option value="<?php print $livre["id_genre"]?>"><?php print $livre["nom_genre"]?> </option>
-
         <?php } ?>
-
         </select>
-
+        <input type="text" name="quantity" placeholder="Nombre de livre" />
         <button name="btn_ajouter" type="submit">Ajouter</button>
 
     </form>
-
-
 </body>
-
 <footer>
-
-
-
 
 <?php $dao->disconnect() ?>
 </footer>
