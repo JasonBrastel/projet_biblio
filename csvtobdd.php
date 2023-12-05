@@ -117,30 +117,36 @@ class DAO
             if (count($this->getAuteursByName($_POST['nom_auteur'])) == 0) {
 
                 //j'insere dans la table auteur
-                $sql = "INSERT INTO auteurs (`id_auteur`,`nom_auteur`) VALUES (NULL,'$nom_auteur')";
-                $this->connect->query($sql);
+                $sql = "INSERT INTO auteurs (`id_auteur`,`nom_auteur`) VALUES (?,?)";
+
+                $query = $this->connect->prepare($sql);
+                $query ->execute([NULL,$nom_auteur]);
 
                 //je recupere l'ID de la derniere requete INSERT effecutée et je la stocke dans une variable pour pouvoir la réutiliser apres
                 $last_id_auteur = $this->connect->lastInsertId();
 
                 //j'insere dans la table livres 
-                $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`auteur_id`,`id_genre`) VALUES (NULL,'".$titreLivre."','".$isbn."','".$dateParution."','".$nombrePages."','".$last_id_auteur."','".$_POST['genre']."')";    
-                $this->connect->query($sql1);
+                $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`auteur_id`,`id_genre`) VALUES (?,?,?,?,?,?,?)";    
+                $query = $this->connect->prepare($sql1);
+                $query->execute([NULL,"$titreLivre","$isbn","$dateParution","$nombrePages","$last_id_auteur","$_POST[genre]"]);
 
                 //je recupere l'ID de la derniere requete INSERT effecutée et je la stocke dans une variable pour pouvoir la réutiliser apres
                 $last_id_livre = $this->connect->lastInsertId();
 
                 //J'insere dans la table livre_genre
-                $sql3="INSERT INTO livre_genre (`id_livre`,`id_genre`) VALUES ('".$last_id_livre."','".$genre."')";
-                $this->connect->query($sql3);
+                $sql3="INSERT INTO livre_genre (`id_livre`,`id_genre`) VALUES (?,?)";
+
+                $query = $this->connect->prepare($sql3);
+                $query->execute([$last_id_livre,$genre]);
                 
                 //J'insere dans la table "livre auteur" l'id du dernier livre ajouté et, grace a la sous requete SELECT, l'id de l'auteur qui a été rentré précédemment dans la table auteur
                 $sql4="INSERT INTO livre_auteur (`id_livre`,`id_auteur`) VALUES ('".$last_id_livre."',(SELECT id_auteur FROM auteurs WHERE nom_auteur LIKE '".$nom_auteur."'))";
                 $this->connect->query($sql4);
 
                 //J'insere dans la table stock le nombre de livres que l'on ajoute
-                $sql5="INSERT INTO stock (`Nombre_livre`) VALUES ('".$_POST['quantity']."')";
-                $this->connect->query($sql5);
+                $sql5="INSERT INTO stock (`Nombre_livre`) VALUES (?)";
+                $query =$this->connect->prepare($sql5);
+                $query->execute([$_POST['quantity']]);
 
                 header('location:ajoutlivre.php');
 
@@ -152,14 +158,16 @@ class DAO
     
                     $last_id_livre = $this->connect->lastInsertId();
     
-                    $sql3="INSERT INTO livre_genre (`id_livre`,`id_genre`) VALUES ('".$last_id_livre."','".$genre."')";
-                    $this->connect->query($sql3);
+                    $sql3="INSERT INTO livre_genre (`id_livre`,`id_genre`) VALUES (?,?)";
+                    $query =$this->connect->prepare($sql3);
+                    $query->execute([$last_id_livre,$genre]);
                     
                     $sql4="INSERT INTO livre_auteur (`id_livre`,`id_auteur`) VALUES ('".$last_id_livre."',(SELECT id_auteur FROM auteurs WHERE nom_auteur LIKE '".$nom_auteur."'))";
                     $this->connect->query($sql4);
     
-                    $sql5="INSERT INTO stock (`Nombre_livre`) VALUES ('".$_POST['quantity']."')";
-                    $this->connect->query($sql5);
+                    $sql5="INSERT INTO stock (`Nombre_livre`) VALUES (?)";
+                    $query =$this->connect->prepare($sql5);
+                    $query->execute([$_POST['quantity']]);
                 
 
                 header('location:ajoutlivre.php');
@@ -175,19 +183,31 @@ class DAO
                 $this->connect->query($sql1);
 
                 $last_id_livre = $this->connect->lastInsertId();
-                $sql3="INSERT INTO livre_genre (`id_livre`,`id_genre`) VALUES ('".$last_id_livre."','".$genre."')";
-                $this->connect->query($sql3);
+                $sql3="INSERT INTO livre_genre (`id_livre`,`id_genre`) VALUES (?,?)";
+                $query = $this->connect->prepare($sql3);
+                $query->execute([$last_id_livre,$genre]);
 
-                $sql4="INSERT INTO livre_auteur (`id_livre`,`id_auteur`) VALUES ('".$last_id_livre."','".$nom_auteur."')";
-                $this->connect->query($sql4);
+                $sql4="INSERT INTO livre_auteur (`id_livre`,`id_auteur`) VALUES (?,?)";
+                $query = $this->connect->prepare($sql4);
+                $query->execute([$last_id_livre,$nom_auteur]);
 
-                $sql5="INSERT INTO stock (`Nombre_livre`) VALUES ('".$_POST['quantity']."')";
-                $this->connect->query($sql5);
+                $sql5="INSERT INTO stock (`Nombre_livre`) VALUES (?)";
+                $query =$this->connect->prepare($sql5);
+                $query->execute([$_POST['quantity']]);
 
                 header('location:ajoutlivre.php');
 
             }   
         }     
     }
+
+    function suppr_livre(){
+
+        $sql="DELETE FROM livres WHERE id_livre LIKE " ;
+        $this->connect->query($sql);
+
+    }
+
+
 }
 
