@@ -19,7 +19,7 @@
 session_start();                                                          //on démarre la session pour pouvoir utiliser les variables de session
 require_once("dao.php");
 if (isset($_SESSION['email']) == true) {
-    header('location: index.php');                                       //on fait la jonction avec le fichier DAO
+    header('location: index.php');                                       
 }                                       
 $dao = new DAO();                                                         //on crée une nouvelle instance de DAO
 $dao->connexion();                                                        //on se connecte à la BDD

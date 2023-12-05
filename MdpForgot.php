@@ -61,11 +61,33 @@ if ($result > 0)  {                                                             
         .boutonInsc:hover {
             background: #BF9C72; 
         }
-
         body {
-        background-image: url('images/FondPageInscription.jpg');
-        background-size: cover;
+            background-image: url('images/FondPageInscription.jpg');
+            background-size: cover;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
         }
+
+        section {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .mask {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        footer {
+            background-color: #343a40; /* Couleur de la navbar */
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+     
     </style>
 
 </head>
@@ -152,16 +174,14 @@ if ($result > 0)  {                                                             
 
     </section>
 
-    <footer class="navbar navbar-expand-lg bg-dark text-white mt-5 ">
-    <div class="container-fluid d-flex justify-content-center ">
-        <span class="navbar-brand text-white fs-6 text"> MyBiblio - 2023  </span>
+
+
+
+    <footer class="navbar navbar-expand-lg bg-dark text-white mt-5">
+    <div class="container-fluid">
+        <span class="navbar-brand text-white fs-6 text">MyBiblio - 2023</span>
     </div>
-    </footer>
-
-
-
-
-
+</footer>
 
 
 
