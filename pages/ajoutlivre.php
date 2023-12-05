@@ -52,13 +52,13 @@ $selectAuteur = $dao-> getAuteurDatalist();
         <input type="text" name="nombrePage" placeholder="Nombre de pages"required/>
         <input type="text" name="long_description" placeholder="Description longue" />
         <input type="text" name="short_description" placeholder="Description courte" />
-
+        <input type="text" name="quantity" placeholder="Nombre de livre" />
         <select name="genre" >
             <?php foreach ($selectGenre as $livre) {?>
             <option value="<?php print $livre["id_genre"]?>"><?php print $livre["nom_genre"]?> </option>
         <?php } ?>
         </select>
-        <input type="text" name="quantity" placeholder="Nombre de livre" />
+        
         <button name="btn_ajouter" type="submit">Ajouter</button>
 
     </form>
