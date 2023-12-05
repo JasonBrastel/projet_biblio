@@ -1,61 +1,47 @@
 <?php
 
-$dsn = 'mysql:dbname=biblio;host=127.0.0.1';
-$user = 'root';
-$password = '';
-
-$dbh = new PDO($dsn, $user, $password);
-
-/*
-		function de lecture du fichier csv
-		en paramètre le nom du fichier à lire (chemin)
-	*/
-	function readJson($filename) {
-		$datas=array();
-		//on ouvre le fichier en lecture
-		if (($handle = fopen($filename, "r")) !== FALSE) {
-			
-			//on lit le fichier ligne par ligne
-                
-			while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-				
-				//on ajoute la ligne à un tableau php
-				//print_r($data);
-
-				
-			}
-			fclose($handle);
-		}
-		
-	}
 
 
 
-		$json=json_decode(file_get_contents("books.json"));
-	//var_dump($json);
-    foreach ($json as $book) {
-        $title = $book->title;
-        $isbn = $book->isbn;
-        $pageCount = $book->pageCount;
-     
-    
-        // Utilisation de la préparation de requête
-        $sql = $dbh->prepare("INSERT INTO livres (titre_livre, isbn, pageCount,date_parution) VALUES (:title, :isbn, :pageCount; :publishedDate)");
-        $sql->bindParam(':title', $title, PDO::PARAM_STR);
-        $sql->bindParam(':isbn', $isbn, PDO::PARAM_STR);
-        $sql->bindParam(':pageCount', $pageCount, PDO::PARAM_INT);
-        $sql->bindParam(':publishedDate', $publishedDate,PDO ::PARAM_STR);
-   
-    
-        // Exécution de la requête
-        $sql->execute();
-    }
-	
 
 ?>
 
 
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+
+<header>
+</header>
+
+<!-- PARTIE BODY  -->
+<body>
+
+
+<!-- PARTIE FORMULAIRE -->
+<form>
+
+</form>
 
 
 
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+<footer>
+
+
+
+
+
+</footer>
+</html>
