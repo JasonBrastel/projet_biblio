@@ -6,6 +6,8 @@ $dao = new DAO();
 $dao->connexion();
 $livres = $dao->getLivre();
 
+// Récupère les statuts de disponibilité des livres
+$dispoStatus = $dao->statusDispo();
 
 
 $dao->disconnect();
@@ -21,9 +23,7 @@ $dao->disconnect();
     <title>Liste des livres</title>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    
-    
-   
+    <link rel="stylesheet" href="../style/style.css">
 </head>
 
 <body>
@@ -37,6 +37,7 @@ $dao->disconnect();
                 <th>Résumé</th>
                 <th>Action</th>
                 <th>Bouton</th>
+                <th>Disponibilité</th> 
             </tr>
         </thead>
         <tbody>
@@ -48,12 +49,14 @@ $dao->disconnect();
             <td><?php echo $livre['isbn']; ?></td>
             <td><?php echo $livre['shortDescription']; ?></td>
             <td><button class="btn btn-info" data-toggle="modal" data-target="#livreModal<?php echo $livre['id_livre']; ?>">Voir détails</button></td>
+            
 
             <form method="POST" action="suppr.php">
             <td><button id="btn_suppr" type="submit" name="btn_suppr"  
             value="<?php echo $livre['id_livre']; ?>" class="btn btn-danger" data-toggle="modal" data-target="#confirmModal">Supprimer</button>
             </td>
             </form>
+            <td><?php echo $dispoStatus[$livre['id_livre']] == 0 ? 'Disponible' : 'Pas disponible'; ?></td>
             </tr>
        
 
@@ -142,36 +145,4 @@ $("#confirmModalYes").click(function(e) {
 </html>
 
 
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <title>Document</title>
-</head>
-
-<header>
-</header>
-
-<!-- PARTIE BODY  -->
-<body>
-
-
-<!-- PARTIE FORMULAIRE -->
-<form>
-
-</form>
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-</body>
-
-<footer>
-
-
-</footer>
-</html>
 

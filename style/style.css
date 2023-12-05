@@ -1,0 +1,8 @@
+
+.dispo {
+    background-color: green; /* Fond vert pour la disponibilité */
+}
+
+.non-dispo {
+    background-color: red; /* Fond rouge pour la non-disponibilité */
+}

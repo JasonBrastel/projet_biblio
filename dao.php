@@ -320,6 +320,39 @@ class DAO
         return $this->getMailMdp($sql);                                             //on retourne le résultat de la requête                                  
     }
 
+
+
+
+
+
+
+    
+
+ //PAUL 
+   // fonction changment de status de la dispo dans datatable 
+   
+   public function statusDispo()
+{
+    // Requête SQL pour sélectionner les ID des livres et leurs statuts de disponibilité
+    $sql = "SELECT id_livre, disponibilite_id FROM livres";
+
+    // Récupérer les résultats de la requête
+    $results = $this->getResults($sql);
+
+    // Initialiser un tableau pour stocker les statuts de disponibilité des livres
+    $statusArray = array();
+
+    // Parcourir les résultats de la requête pour construire le tableau des statuts
+    foreach ($results as $result) {
+        // Utiliser l'ID du livre comme clé et le statut de disponibilité comme valeur dans le tableau
+        $statusArray[$result['id_livre']] = $result['disponibilite_id'];
+    }
+
+    // Retourner le tableau des statuts de disponibilité
+    return $statusArray;
+}
+
+
 }
 
 
