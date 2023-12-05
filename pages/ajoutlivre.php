@@ -1,6 +1,6 @@
 <?php
 //on fait la jonction avec le fichier DAO
-require_once("../csvtobdd.php");
+require_once("../dao.php");
 $dao = new DAO();
 $dao->connexion();
 // var_dump($_POST);
