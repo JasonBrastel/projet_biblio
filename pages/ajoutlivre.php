@@ -1,4 +1,5 @@
 <?php
+
 //on fait la jonction avec le fichier DAO
 require_once("../dao.php");
 $dao = new DAO();
@@ -26,15 +27,33 @@ $selectAuteur = $dao-> getAuteurDatalist();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajout de livres</title>
-</head>
+=======
 
-<header>
+
+
+
+
+?>
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 
     <h1> AJOUT DE LIVRES </h1>
+
+
+<h1> AJOUT DE LIVRE </h1>
+
 
 </header>
 
 <body>
+
 
     <form method="POST">
 
@@ -67,5 +86,6 @@ $selectAuteur = $dao-> getAuteurDatalist();
 
 <?php $dao->disconnect() ?>
 </footer>
+
 
 </html>
