@@ -13,7 +13,7 @@ class DAO
     private $charset = "utf8";
 
     //instance courante de la connexion
-    private $connect;
+    private $bdd;
 
     //stockage de l'erreur éventuelle du serveur mysql
     private $error;
@@ -27,8 +27,8 @@ class DAO
     {
 
         try {
-            // On se connecte à MySQL
-            $this->connect = new PDO('mysql:host=' . $this->host . ';dbname=' . $this->database . ';charset=' . $this->charset, $this->user, $this->password);
+            // On se bdde à MySQL
+            $this->bdd = new PDO('mysql:host=' . $this->host . ';dbname=' . $this->database . ';charset=' . $this->charset, $this->user, $this->password);
         } catch (Exception $e) {
             // En cas d'erreur, on affiche un message et on arrête tout
             $this->error = 'Erreur : ' . $e->getMessage();
@@ -38,7 +38,7 @@ class DAO
     /* méthode pour fermer la connexion à la base de données */
 	public function disconnect()
 	{
-		$this->connect = null;
+		$this->bdd = null;
 	}
 
     //FONCTION QUI RECUPERE LES RESULTATS DES REQUETES SQL
@@ -47,11 +47,11 @@ class DAO
 
         $resultat = array();
 
-        $declaration = $this->connect->query($requete);
+        $declaration = $this->bdd->query($requete);
 
         if (!$declaration) {
 
-            $this->error = $this->connect->erreurInformation();
+            $this->error = $this->bdd->erreurInformation();
             return false;
         } else {
 
@@ -119,33 +119,33 @@ class DAO
                 //j'insere dans la table auteur
                 $sql = "INSERT INTO auteurs (`id_auteur`,`nom_auteur`) VALUES (?,?)";
 
-                $query = $this->connect->prepare($sql);
+                $query = $this->bdd->prepare($sql);
                 $query ->execute([NULL,$nom_auteur]);
 
                 //je recupere l'ID de la derniere requete INSERT effecutée et je la stocke dans une variable pour pouvoir la réutiliser apres
-                $last_id_auteur = $this->connect->lastInsertId();
+                $last_id_auteur = $this->bdd->lastInsertId();
 
                 //j'insere dans la table livres 
                 $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`auteur_id`,`id_genre`) VALUES (?,?,?,?,?,?,?)";    
-                $query = $this->connect->prepare($sql1);
+                $query = $this->bdd->prepare($sql1);
                 $query->execute([NULL,"$titreLivre","$isbn","$dateParution","$nombrePages","$last_id_auteur","$_POST[genre]"]);
 
                 //je recupere l'ID de la derniere requete INSERT effecutée et je la stocke dans une variable pour pouvoir la réutiliser apres
-                $last_id_livre = $this->connect->lastInsertId();
+                $last_id_livre = $this->bdd->lastInsertId();
 
                 //J'insere dans la table livres_genres
                 $sql3="INSERT INTO livres_genres (`id_livre`,`id_genre`) VALUES (?,?)";
 
-                $query = $this->connect->prepare($sql3);
+                $query = $this->bdd->prepare($sql3);
                 $query->execute([$last_id_livre,$genre]);
                 
                 //J'insere dans la table "livre auteur" l'id du dernier livre ajouté et, grace a la sous requete SELECT, l'id de l'auteur qui a été rentré précédemment dans la table auteur
                 $sql4="INSERT INTO livre_auteur (`id_livre`,`id_auteur`) VALUES ('".$last_id_livre."',(SELECT id_auteur FROM auteurs WHERE nom_auteur LIKE '".$nom_auteur."'))";
-                $this->connect->query($sql4);
+                $this->bdd->query($sql4);
 
                 //J'insere dans la table stock le nombre de livres que l'on ajoute
                 $sql5="INSERT INTO stock (`Nombre_livre`) VALUES (?)";
-                $query =$this->connect->prepare($sql5);
+                $query =$this->bdd->prepare($sql5);
                 $query->execute([$_POST['quantity']]);
 
                 header('location:ajoutlivre.php');
@@ -154,19 +154,19 @@ class DAO
                 } elseif (count($this->getIsbn(($_POST['isbn']))) == 0) {
     
                     $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`auteur_id`,`id_genre`) VALUES (NULL,'".$titreLivre."','".$isbn."','".$dateParution."','".$nombrePages."',(SELECT id_auteur FROM auteurs WHERE nom_auteur LIKE '".$nom_auteur."'),'".$_POST['genre']."')";    
-                    $this->connect->query($sql1);
+                    $this->bdd->query($sql1);
     
-                    $last_id_livre = $this->connect->lastInsertId();
+                    $last_id_livre = $this->bdd->lastInsertId();
     
                     $sql3="INSERT INTO livres_genres (`id_livre`,`id_genre`) VALUES (?,?)";
-                    $query =$this->connect->prepare($sql3);
+                    $query =$this->bdd->prepare($sql3);
                     $query->execute([$last_id_livre,$genre]);
                     
                     $sql4="INSERT INTO livre_auteur (`id_livre`,`id_auteur`) VALUES ('".$last_id_livre."',(SELECT id_auteur FROM auteurs WHERE nom_auteur LIKE '".$nom_auteur."'))";
-                    $this->connect->query($sql4);
+                    $this->bdd->query($sql4);
     
                     $sql5="INSERT INTO stock (`Nombre_livre`) VALUES (?)";
-                    $query =$this->connect->prepare($sql5);
+                    $query =$this->bdd->prepare($sql5);
                     $query->execute([$_POST['quantity']]);
                 
 
@@ -180,19 +180,19 @@ class DAO
                 //Comptage des lignes a l'issu de la requete inclu dans la fonction "getAuteursByName" SI le resultat est différent de 0, c'est que l'auteur existe deja, donc on ajoute tout sauf l'auteur
                 elseif (count($this->getAuteursByName($_POST['nom_auteur'])) != 0) {
                 $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`auteur_id`,`id_genre`) VALUES (NULL,'".$titreLivre."','".$isbn."','".$dateParution."','".$nombrePages."',(SELECT id_auteur FROM auteurs WHERE nom_auteur LIKE '".$nom_auteur."'), '".$_POST['genre']."')";
-                $this->connect->query($sql1);
+                $this->bdd->query($sql1);
 
-                $last_id_livre = $this->connect->lastInsertId();
+                $last_id_livre = $this->bdd->lastInsertId();
                 $sql3="INSERT INTO livres_genres (`id_livre`,`id_genre`) VALUES (?,?)";
-                $query = $this->connect->prepare($sql3);
+                $query = $this->bdd->prepare($sql3);
                 $query->execute([$last_id_livre,$genre]);
 
                 $sql4="INSERT INTO livre_auteur (`id_livre`,`id_auteur`) VALUES (?,?)";
-                $query = $this->connect->prepare($sql4);
+                $query = $this->bdd->prepare($sql4);
                 $query->execute([$last_id_livre,$nom_auteur]);
 
                 $sql5="INSERT INTO stock (`Nombre_livre`) VALUES (?)";
-                $query =$this->connect->prepare($sql5);
+                $query =$this->bdd->prepare($sql5);
                 $query->execute([$_POST['quantity']]);
 
                 header('location:ajoutlivre.php');
@@ -204,7 +204,7 @@ class DAO
     function suppr_livre(){
 
         $sql="DELETE FROM livres WHERE id_livre LIKE " ;
-        $this->connect->query($sql);
+        $this->bdd->query($sql);
 
     }
 
