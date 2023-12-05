@@ -1,4 +1,3 @@
-
 <?php
 
 require_once("dao.php");
@@ -8,7 +7,9 @@ $dao->connexion();
 $livres = $dao->getLivre();
 
 
+
 $dao->disconnect();
+
 ?>
 
 <!DOCTYPE html>
@@ -21,14 +22,8 @@ $dao->disconnect();
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     
-    <style>
-        body {
-            color: #566787;
-            background: #f5f5f5;
-            font-family: 'Varela Round', sans-serif;
-            font-size: 13px;
-        }
-    </style>
+    
+   
 </head>
 
 <body>
@@ -47,15 +42,19 @@ $dao->disconnect();
         <tbody>
         <?php foreach ($livres as $livre) { ?>
  
-        <tr>
+        <tr id="<?php print $livre['id_livre']?>">
             <td><img src="<?php echo $livre['image']; ?>" alt="Image du livre"></td>
             <td><?php echo $livre['titre_livre']; ?></td>
             <td><?php echo $livre['isbn']; ?></td>
             <td><?php echo $livre['shortDescription']; ?></td>
             <td><button class="btn btn-info" data-toggle="modal" data-target="#livreModal<?php echo $livre['id_livre']; ?>">Voir détails</button></td>
-            <td><button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirmModal<?php echo $livre['id_livre']; ?>">Supprimer</button>
-</td>
-        </tr>
+
+            <form method="POST" action="suppr.php">
+            <td><button id="btn_suppr" type="submit" name="btn_suppr"  
+            value="<?php echo $livre['id_livre']; ?>" class="btn btn-danger" data-toggle="modal" data-target="#confirmModal">Supprimer</button>
+            </td>
+            </form>
+            </tr>
        
 
             <!-- Modal -->
@@ -107,11 +106,13 @@ $dao->disconnect();
         </tbody>
     </table>
 
+
+    <script src="./script/script.js" > </script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-    <script>
+<script>
          $(document).ready(function() {
             $('#example').DataTable({
                 language: {
@@ -139,13 +140,7 @@ $("#confirmModalYes").click(function(e) {
 </body>
 
 </html>
-=======
 
-
-
-
-
-?>
 
 
 
@@ -171,17 +166,10 @@ $("#confirmModalYes").click(function(e) {
 </form>
 
 
-
-
-
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 
 <footer>
-
-
-
 
 
 </footer>

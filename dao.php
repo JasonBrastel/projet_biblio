@@ -228,10 +228,11 @@ class DAO
         }     
     }
 
-    function suppr_livre(){
+    function suppr_livre($idlivre){
 
-        $sql="DELETE FROM livres WHERE id_livre LIKE " ;
+        $sql="DELETE FROM livres WHERE id_livre LIKE $idlivre";
         $this->bdd->query($sql);
+       
 
     }
 
