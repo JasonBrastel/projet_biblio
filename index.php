@@ -7,9 +7,6 @@ $dao = new DAO();
 $dao->connexion();
 $livres = $dao->getLivre();
 
-if ($dao->getLastError()) {
-    print $dao->getLastError();
-}
 
 $dao->disconnect();
 ?>

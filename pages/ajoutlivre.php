@@ -27,13 +27,6 @@ $selectAuteur = $dao-> getAuteurDatalist();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ajout de livres</title>
-=======
-
-
-
-
-
-?>
 
 
 
@@ -47,7 +40,6 @@ $selectAuteur = $dao-> getAuteurDatalist();
     <h1> AJOUT DE LIVRES </h1>
 
 
-<h1> AJOUT DE LIVRE </h1>
 
 
 </header>

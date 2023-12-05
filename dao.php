@@ -65,6 +65,9 @@ class DAO
 		$this->bdd = null;
 	}
 
+
+    //CLEMENT
+    
     //FONCTION QUI RECUPERE LES RESULTATS DES REQUETES SQL
     public function getResultat($requete)
     {
@@ -232,13 +235,24 @@ class DAO
 
     }
 
+//JASON
+	/* méthode qui renvoit tous les résultats sous forme de tableau
+	*/
+	public function getLivre() {
+		$sql="SELECT image, titre_livre, isbn, shortDescription,id_livre FROM livres;";
+		return $this->getResults($sql);
+	}
+	
+	public function getDelete() {
+		$sql="SELECT image, titre_livre, isbn, shortDescription,id_livre FROM livres;";
+		return $this->getResults($sql);
+	}
+	
 
-}
 
 
-    } 
 
-
+//DAVID
     //fonction pour ajouter des utilisateurs depuis le formulaire d'inscription:
         
     //mettre en paramètre les données stockées en POST    
