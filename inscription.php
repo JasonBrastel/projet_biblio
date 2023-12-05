@@ -2,14 +2,14 @@
     //fonction pour montrer les mots de passe:
     function filtreMdp() {
 
-        let pass1 = document.getElementById("pass");                          //on crée une variable pour le premier mot de passe
-        let pass2 = document.getElementById("pass2");                         //on crée une variable pour le deuxième mot de passe
+        let pass1 = document.getElementById("pass"); //on crée une variable pour le premier mot de passe
+        let pass2 = document.getElementById("pass2"); //on crée une variable pour le deuxième mot de passe
 
-        if (pass1.type === "password" && pass2.type === "password") {          //si les mots de passe sont cachés, on les affiche:
-            pass1.type = "text";                                               //on change le type de l'input pour afficher le mot de passe
-            pass2.type = "text";                                                
+        if (pass1.type === "password" && pass2.type === "password") { //si les mots de passe sont cachés, on les affiche:
+            pass1.type = "text"; //on change le type de l'input pour afficher le mot de passe
+            pass2.type = "text";
         } else {
-            pass1.type = "password";                                           //sinon, on les cache:                       
+            pass1.type = "password"; //sinon, on les cache:                       
             pass2.type = "password";
         }
     }
@@ -17,10 +17,10 @@
 
 <?php
 session_start();                                                          //on démarre la session pour pouvoir utiliser les variables de session
-require_once("dao.php");    
-if(isset($_SESSION['email'])==true) {
+require_once("dao.php");
+if (isset($_SESSION['email']) == true) {
     header('location: index.php');                                       //on fait la jonction avec le fichier DAO
-}                                       //on fait la jonction avec le fichier DAO
+}                                       
 $dao = new DAO();                                                         //on crée une nouvelle instance de DAO
 $dao->connexion();                                                        //on se connecte à la BDD
 
@@ -75,7 +75,7 @@ if (isset($_POST['button_register']) && ($_SERVER['REQUEST_METHOD'] === 'POST'))
     } else {
         if ($_POST['pass'] == $_POST['pass2']) {                                                        // on vérifie que les mots de passe lors de l'inscription correspondent :
             $dao->addUsers($nom, $prenom, $email, $pass);                                               // si oui, on ajoute l'utilisateur dans la BDD en utilisant la fonction addUsers
-           $succes = "✔ Votre inscription a bien été validée";                                          // on affiche un message de validation de l'inscription                                            
+            $succes = "✔ Votre inscription a bien été validée";                                          // on affiche un message de validation de l'inscription                                            
 
         } else {                                                                                        // sinon, on affiche un message d'erreur:                                       
             $messageErrorMDP = "Les mots de passe ne correspondent pas.";
@@ -107,15 +107,48 @@ if (isset($_POST['button_register']) && ($_SERVER['REQUEST_METHOD'] === 'POST'))
         .boutonInsc:hover {
             background: #BF9C72;
         }
-    </style>
+        
+        body {
+        background-image: url('images/FondPageInscription.jpg');
+        background-size: cover;
+        }
+        </style>
 
 
 
 </head>
 
 <body>
+
+
+
+
     <!-- dans le body, on met le formulaire d'inscription: -->
-    <section style="background-image: url('images/FondPageInscription.jpg');background-size: cover; height: 100vh;">
+    <section >
+
+
+        <nav class="navbar navbar-expand-lg bg-dark mb-5">
+            <div class="container-fluid">
+                <a class="navbar-brand text-white" href="#">MyBiblio</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse " id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active text-white" aria-current="page" href="#">Membres</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#">Ajout livres</a>
+                        </li>
+                    </ul>
+
+                   <a style="color:white;" href="LoginPage.php">se connecter</a>
+
+                </div>
+            </div>
+        </nav>
 
         <div class="mask d-flex align-items-center h-100 gradient-custom-3">
 
@@ -216,7 +249,12 @@ if (isset($_POST['button_register']) && ($_SERVER['REQUEST_METHOD'] === 'POST'))
         </div>
     </section>
 
-
+    <!-- Footer -->
+<footer class="navbar navbar-expand-lg bg-dark text-white mt-5 ">
+    <div class="container-fluid d-flex justify-content-center ">
+        <span class="navbar-brand text-white fs-6 text"> MyBiblio - 2023  </span>
+    </div>
+</footer>
 
 
 
