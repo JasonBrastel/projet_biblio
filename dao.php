@@ -228,6 +228,27 @@ class DAO
         }     
     }
 
+
+    function emprunt_livre(){
+       
+        var_dump($_POST['id_livre']);
+        
+        $livre_emprunte= $_POST['id_livre'];
+
+        $sql="UPDATE livres SET disponibilite_id = 1 WHERE id_livre LIKE $livre_emprunte" ;
+
+        $this->bdd->query($sql);
+
+        var_dump($sql);
+
+        //$query= $this->bdd->prepare($sql);
+        //$query->execute(['disponibilite_id = 1']);
+        
+    
+}
+
+
+
     function suppr_livre($idlivre){
 
         $sql="DELETE FROM livres WHERE id_livre LIKE $idlivre";
