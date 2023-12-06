@@ -249,7 +249,11 @@ $selectAuteur = $dao-> getAuteurDatalist();
             </article>
         </section>
 
-      </div> 
+
+    
+
+</div>
+      
       <!-- Footer -->
        <footer class="navbar navbar-expand-lg bg-dark text-white mt-5 ">
            <div class="container-fluid d-flex justify-content-center ">
@@ -288,7 +292,7 @@ $selectAuteur = $dao-> getAuteurDatalist();
             });
         </script>
         <?php $dao->disconnect(); ?>
-   
+
 
 </body>
 
