@@ -93,6 +93,14 @@ class DAO
         var_dump($sql);
     }
 
+    function get_livre(){
+
+        $sql="SELECT id_livre, titre_livre, disponibilite_id FROM `livres`";
+        return $this->getResultat($sql);
+        
+
+    }
+
     //FONCTION POUR RECUPERER LES GENRES DE LIVRES
     function getGenre(){
 
@@ -105,6 +113,26 @@ class DAO
 
         $sql = "SELECT nom_auteur, id_auteur FROM `auteurs` ;";
        
+        return $this->getResultat($sql);
+
+    }
+
+    function get_livre_utilisateur($name){
+
+        $sql="SELECT id_livre FROM `livre_utilisateur`";
+        return $this->getResultat($sql);
+
+    }
+    function verif_dispo_livre($id_livre){
+
+        $sql="SELECT disponibilite_id FROM livres WHERE id_livre LIKE  $id_livre";
+        return $this->getResultat($sql);
+
+    }
+
+    function getUtilisateur(){
+
+        $sql= "SELECT * FROM `utilisateurs`";
         return $this->getResultat($sql);
 
     }
@@ -230,31 +258,47 @@ class DAO
 
 
     function emprunt_livre(){
-       
-        var_dump($_POST['id_livre']);
         
-        $livre_emprunte= $_POST['id_livre'];
+        if(isset($_POST['liste_livre'])){
 
-        $sql="UPDATE livres SET disponibilite_id = 1 WHERE id_livre LIKE $livre_emprunte" ;
-
-        $this->bdd->query($sql);
-
-        var_dump($sql);
-
-        //$query= $this->bdd->prepare($sql);
-        //$query->execute(['disponibilite_id = 1']);
+           
         
+            $idlivre = $_POST['liste_livre'];
+            $sql="UPDATE livres SET disponibilite_id = 1 WHERE id_livre LIKE $idlivre";
+            $this->bdd->query($sql);
+            $id_util = $_POST['utilisateur'];
+            $sql1="INSERT INTO livre_utilisateur (`id_livre`,`id_utilisateur`) VALUES (?,?)";
+            $query = $this->bdd->prepare($sql1);
+            $query->execute([$idlivre, $id_util]);
+
+            
+            }
+               
+        }
     
-}
+        function rendu_livre(){
 
 
+            if(isset($_POST['liste_livre'])){
+   
+                $idlivre = $_POST['liste_livre'];
+                $sql="UPDATE livres SET disponibilite_id = 0 WHERE id_livre LIKE $idlivre";
+                $this->bdd->query($sql);
+                $id_util = $_POST['utilisateur'];
 
+                $sql1="DELETE FROM livre_utilisateur WHERE id_livre =  $idlivre AND id_utilisateur = $id_util";
+                $this->bdd->query($sql1);
+
+                }
+                   
+            }
+
+        
     function suppr_livre($idlivre){
 
         $sql="DELETE FROM livres WHERE id_livre LIKE $idlivre";
         $this->bdd->query($sql);
        
-
     }
 
 //JASON
