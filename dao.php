@@ -85,6 +85,23 @@ class DAO
             return $declaration->fetchAll();
         }
     }
+
+    public function getAlone($requete, $param)
+    {
+
+        $resultat = array();
+
+        $declaration = $this->bdd->prepare($requete);
+
+        if (!$declaration) {
+
+            $this->error = $this->bdd->erreurInformation();
+            return false;
+        } else {
+            $declaration->execute($param);
+            return $declaration->fetch();
+        }
+    }
     //FONCTION POUR RECUPERER IBSN DES LIVRES
     function getIsbn($isbn){
 
@@ -100,6 +117,15 @@ class DAO
         
 
     }
+
+    function get_livre_emprunt($param = []){
+
+        $sql="SELECT * FROM `livres` where titre_livre = :inputTitre";
+        return $this->getAlone($sql, $param);
+        
+    }
+
+
 
     //FONCTION POUR RECUPERER LES GENRES DE LIVRES
     function getGenre(){
@@ -257,14 +283,16 @@ class DAO
     }
 
 
-    function emprunt_livre(){
+
+    function emprunt_livre($param){
+
         
-        if(isset($_POST['liste_livre'])){
+        if(isset($_POST['liste_livre_emprunt'])){
 
            
         
-            $idlivre = $_POST['liste_livre'];
-            $sql="UPDATE livres SET disponibilite_id = 1 WHERE id_livre LIKE $idlivre";
+            $idlivre = $param;
+            $sql="UPDATE livres SET disponibilite_id = 1 WHERE id_livre = $idlivre";
             $this->bdd->query($sql);
             $id_util = $_POST['utilisateur'];
             $sql1="INSERT INTO livre_utilisateur (`id_livre`,`id_utilisateur`) VALUES (?,?)";
@@ -276,13 +304,13 @@ class DAO
                
         }
     
-        function rendu_livre(){
+        function rendu_livre($param){
 
 
-            if(isset($_POST['liste_livre'])){
+            if(isset($_POST['liste_livre_rendu'])){
    
-                $idlivre = $_POST['liste_livre'];
-                $sql="UPDATE livres SET disponibilite_id = 0 WHERE id_livre LIKE $idlivre";
+                $idlivre = $param;
+                $sql="UPDATE livres SET disponibilite_id = 0 WHERE id_livre = $idlivre";
                 $this->bdd->query($sql);
                 $id_util = $_POST['utilisateur'];
 
