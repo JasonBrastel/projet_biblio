@@ -348,27 +348,6 @@ class DAO
 		return $this->getResults($sql);
 	}
 	
-    // Retourner le tableau des statuts de disponibilité
-    return $statusArray;
-
-}
-    public function getUtilisateurLivreEmprunte() {
-        $sql="SELECT nom_utilisateur, prenom_utilisateur,identifiant_utilisateur, utilisateurs.id_utilisateur,titre_livre FROM `utilisateurs` INNER JOIN livre_utilisateur ON utilisateurs.id_utilisateur= livre_utilisateur.id_utilisateur INNER JOIN livres ON livres.id_livre = livre_utilisateur.id_livre WHERE type_utilisateur LIKE '%0' ORDER BY nom_utilisateur;";
-
-
-        
-        return $this->getResults($sql);
-
-}
-
-
-function suppr_user($user){
-
-    $sql="DELETE FROM utilisateurs WHERE id_utilisateur LIKE $user";
-    $this->bdd->query($sql);
-
-
-}
 
 
 
@@ -440,29 +419,11 @@ function suppr_user($user){
         return $this->getMailMdp($sql);                                             //on retourne le résultat de la requête                                  
     }
 
-
-    //Fonction pour afficher le catalogue de livre
-	public function getLivre() {
-		$sql="SELECT image, titre_livre, isbn, shortDescription,id_livre FROM livres;";
-		return $this->getResults($sql);
-	}
-	
-	public function getDelete() {
-		$sql="SELECT image, titre_livre, isbn, shortDescription,id_livre FROM livres;";
-		return $this->getResults($sql);
-	}
+   
 
 
 
- //fonction pour afficher liste utlisateur
-    public function getUtilisateur() {
-        $sql="SELECT nom_utilisateur, prenom_utilisateur,identifiant_utilisateur, id_utilisateur,livre_emprunte FROM `utilisateurs` WHERE type_utilisateur LIKE '%0' ORDER BY nom_utilisateur";
-
-        return $this->getResults($sql);
-
-
-
-
+ //PAUL 
    // fonction changment de status de la dispo dans datatable 
    
    public function statusDispo()
@@ -482,7 +443,9 @@ function suppr_user($user){
         $statusArray[$result['id_livre']] = $result['disponibilite_id'];
     }
 
-
+    // Retourner le tableau des statuts de disponibilité
+    return $statusArray;
+}
 
 }
 ?>
