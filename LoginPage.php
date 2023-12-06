@@ -41,7 +41,7 @@ if (isset($_POST['button_register']) && (($_SERVER['REQUEST_METHOD'] === 'POST')
             } else {
                 // Continuer le processus de connexion car l'utilisateur a les droits nécessaires
                 $_SESSION['email'] = $email;                         //on stocke l'email dans une variable de session   
-                // header('location: index.php');                       //on redirige l'utilisateur vers la page d'accueil
+                header('location: index.php');                       //on redirige l'utilisateur vers la page d'accueil
             }
         } else {
             $IdentifiantsErr = "Vos identifiants sont incorrects. Veuillez réessayer.";
