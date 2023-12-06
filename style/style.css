@@ -1,8 +1,16 @@
-
 .dispo {
-    background-color: green; /* Fond vert pour la disponibilité */
+    background-color: green !important;
+    color: white !important;
+    opacity: 80% !important;
 }
 
 .non-dispo {
-    background-color: red; /* Fond rouge pour la non-disponibilité */
+    background-color: red !important;
+    color: white !important;
+    opacity: 80% !important;
+}
+
+.details-btn{
+    width: 150px !important;
+    margin: 5px !important;
 }

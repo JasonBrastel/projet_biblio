@@ -232,8 +232,6 @@ class DAO
 
         $sql="DELETE FROM livres WHERE id_livre LIKE $idlivre";
         $this->bdd->query($sql);
-       
-
     }
 
 //JASON
