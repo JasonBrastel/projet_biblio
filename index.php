@@ -1,6 +1,5 @@
-
 <?php
-
+session_start();
 require_once("dao.php");
 
 $dao = new DAO();
@@ -25,12 +24,15 @@ $liste_utilisateur = $dao->getUtilisateur();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Liste des livres</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="style/style.css">
 </head>
 
+
 <body>
+
 
     <nav class="navbar navbar-expand-lg bg-dark mb-5">
         <div class="container-fluid">
@@ -150,11 +152,13 @@ $liste_utilisateur = $dao->getUtilisateur();
                                                                                         print $utilisateur["prenom_utilisateur"] ?> </option>
                     <?php } ?>
                 </select>
+
                 <input type="text" list="choix_livre_emprunt" name="liste_livre_emprunt">
                 <datalist id="choix_livre_emprunt">
                     <?php foreach ($id_livre as $book) {
                         if ($book['disponibilite_id'] == 0) { ?>
                             <option value="<?php print $book['titre_livre'] ?>"><?php print $book['titre_livre'] ?></option>
+
                     <?php  }
                     } ?>
 
@@ -176,11 +180,13 @@ $liste_utilisateur = $dao->getUtilisateur();
                 </select>
 
 
+
                 <input type="text" list="choix_livre_rendu" name="liste_livre_rendu">
                 <datalist id="choix_livre_rendu">
                     <?php foreach ($id_livre as $book) {
                         if ($book['disponibilite_id'] == 1) { ?>
                             <option value="<?php print $book['titre_livre'] ?>"><?php print $book['titre_livre'] ?></option>
+
                     <?php  } else {
                         }
                     } ?>
@@ -192,6 +198,15 @@ $liste_utilisateur = $dao->getUtilisateur();
 
 
         </section>
+
+      
+      <!-- Footer -->
+       <footer class="navbar navbar-expand-lg bg-dark text-white mt-5 ">
+           <div class="container-fluid d-flex justify-content-center ">
+            <span class="navbar-brand text-white fs-6 text"> MyBiblio - 2023 </span>
+            </div>
+        </footer>
+
 
         <script src="./script/script.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -227,5 +242,5 @@ $liste_utilisateur = $dao->getUtilisateur();
 
 </body>
 
->>>>>>> Stashed changes
+
 </html>
