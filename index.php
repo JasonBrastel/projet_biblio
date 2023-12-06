@@ -39,6 +39,9 @@ $selectAuteur = $dao-> getAuteurDatalist();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="style/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap" rel="stylesheet">
 </head>
 
 
@@ -72,10 +75,11 @@ $selectAuteur = $dao-> getAuteurDatalist();
             </div>
         </div>
     </nav>
-<section>
-
+<section class="d-flex justify-content-center" >
+    <div class="article d-flex flex-column px-3 py-3" style="border: solid 1px; border-radius:15px;">
+<div class="mb-2">
 <form method="POST">
-
+<h1 class="d-flex justify-content-center">AJOUT DE LIVRES :</h1>  <br>
 <input type="text" name="titre_livre" placeholder="Titre du livre" required />
 <input type="text" name="isbn" placeholder="ISBN" required />
 <input type="text" list="choix_auteur" name="nom_auteur" placeholder="Nom de l'auteur" required/>
@@ -87,21 +91,26 @@ $selectAuteur = $dao-> getAuteurDatalist();
         </datalist>
   
 <input type="date" name="date_parution" name="trip-start" value="" required/>
-<input type="text" name="nombrePage" placeholder="Nombre de pages"required/>
+<input style="width:130px;"type="text" name="nombrePage" placeholder="Nombre de pages"required/>
+</div>
+
+<div>
+
 <input type="text" name="long_description" placeholder="Description longue" />
 <input type="text" name="short_description" placeholder="Description courte" />
 <input type="text" name="quantity" placeholder="Nombre de livre" />
-<select name="genre" >
+<select  name="genre" >
     <?php foreach ($selectGenre as $livre) {?>
     <option value="<?php print $livre["id_genre"]?>"><?php print $livre["nom_genre"]?> </option>
 <?php } ?>
+
+</div>
 </select>
-
-<button name="btn_ajouter" type="submit">Ajouter</button>
-
+<div class="d-flex justify-content-center mt-3">
+<button style="font-family: 'Roboto Slab', serif;" type="submit" name="btn_ajouter" class="btn btn-dark details-btn" >Ajouter</button>
+</div>
 </form>
-</body>
-<footer>
+</div>
 
 
 </section>
@@ -130,10 +139,10 @@ $selectAuteur = $dao-> getAuteurDatalist();
 
                         <td class="dispo-col">
                             <!-- Bouton détails -->
-                            <button class="btn btn-info details-btn " data-bs-toggle="modal" data-bs-target="#livreModal<?php echo $livre['id_livre']; ?>">Voir détails</button>
+                            <button  style="font-family: 'Roboto Slab', serif;" class="btn btn-info details-btn " data-bs-toggle="modal" data-bs-target="#livreModal<?php echo $livre['id_livre']; ?>">Voir détails</button>
                             <!-- Bouton supprimer -->
                             <form method="POST" action="suppr.php">
-                                <button id="btn_suppr" type="submit" name="btn_suppr" value="<?php echo $livre['id_livre']; ?>" class="btn btn-danger details-btn" data-bs-toggle="modal" data-bs-target="#confirmModal">Supprimer</button>
+                                <button id="btn_suppr" type="submit" name="btn_suppr" value="<?php echo $livre['id_livre']; ?>" style="font-family: 'Roboto Slab', serif;" class="btn btn-danger details-btn" data-bs-toggle="modal" data-bs-target="#confirmModal">Supprimer</button>
                             </form>
                         </td>
 
@@ -158,7 +167,7 @@ $selectAuteur = $dao-> getAuteurDatalist();
                                     <p>Description: <?php echo $livre['shortDescription']; ?></p>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Fermer</button>
                                 </div>
                             </div>
                         </div>
