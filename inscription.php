@@ -19,7 +19,7 @@
 session_start();                                                          //on démarre la session pour pouvoir utiliser les variables de session
 require_once("dao.php");
 if (isset($_SESSION['email']) == true) {
-    header('location: index.php');                                       
+    header('location: index.php');                                       //on fait la jonction avec le fichier DAO
 }                                       
 $dao = new DAO();                                                         //on crée une nouvelle instance de DAO
 $dao->connexion();                                                        //on se connecte à la BDD
@@ -136,11 +136,11 @@ if (isset($_POST['button_register']) && ($_SERVER['REQUEST_METHOD'] === 'POST'))
                 <div class="collapse navbar-collapse " id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active text-white" aria-current="page" href="#">Membres</a>
+                            <a class="nav-link active text-white" aria-current="page" href="#"></a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="#">Ajout livres</a>
+                            <a class="nav-link text-white" href="#"></a>
                         </li>
                     </ul>
 

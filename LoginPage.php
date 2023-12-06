@@ -40,8 +40,8 @@ if (isset($_POST['button_register']) && (($_SERVER['REQUEST_METHOD'] === 'POST')
                 $IdentifiantsErr = "<div class='text-center'>Vous n'avez pas les droits nécessaires pour vous connecter.<br>Veuillez contacter l'administrateur.</div>";
             } else {
                 // Continuer le processus de connexion car l'utilisateur a les droits nécessaires
-                $_SESSION['email'] = $email;
-                // header('location: index.php');
+                $_SESSION['email'] = $email;                         //on stocke l'email dans une variable de session   
+                // header('location: index.php');                       //on redirige l'utilisateur vers la page d'accueil
             }
         } else {
             $IdentifiantsErr = "Vos identifiants sont incorrects. Veuillez réessayer.";
@@ -93,23 +93,28 @@ if (isset($_POST['button_register']) && (($_SERVER['REQUEST_METHOD'] === 'POST')
 
     <nav class="navbar navbar-expand-lg bg-dark mb-5">
             <div class="container-fluid">
-                <a class="navbar-brand text-white" href="#">MyBiblio</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                <a class="navbar-brand text-white" href="LoginPage.php">MyBiblio</a>
+               
                 <div class="collapse navbar-collapse " id="navbarSupportedContent">
+                
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <?php if (isset($_SESSION['email']) == true) { ?>
                         <li class="nav-item">
                             <a class="nav-link active text-white" aria-current="page" href="#">Membres</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="#">Ajout livres</a>
+                            <a class="nav-link text-white" href="index.php">Livres</a>
                         </li>
+                    <?php } ?>
                     </ul>
-
+                
+                    <?php if (isset($_SESSION['email']) == false) { ?>
                    <a style="color:white;" href="inscription.php">Inscription</a>
+                   <?php }else{ ?>
+                    <a style="color:red;" class="d-flex justify-content-center " title="Cliquez ici pour vous déconnecter"href='deco.php'>Déconnexion</a>
 
+                    <?php } ?>
                 </div>
             </div>
         </nav>
@@ -169,18 +174,15 @@ if (isset($_POST['button_register']) && (($_SERVER['REQUEST_METHOD'] === 'POST')
                                     </div>
 
                                     <?php if (isset($_SESSION['email']) == true) { ?>  <!-- si l'utilisateur est connecté, on affiche le bouton de déconnexion -->
-                                     <p style="color:green;" class="d-flex justify-content-center mt-3 ">✔ Connexion établie, bienvenue <?php echo $_SESSION['email']  ?> !</p>
+                                     <p style="color:green;" class="d-flex justify-content-center ">✔ Connexion établie, bienvenue <?php echo $_SESSION['email']  ?> !</p>
                                        
                                     <?php } ?>
 
                                     <!-- bouton pour s'inscrire: -->
-
+                                    <?php if (isset($_SESSION['email']) == false) { ?>
                                     <div class=" d-flex justify-content-center mt-4">
                                         <button type="submit" name="button_register" class="boutonInsc btn btn btn-lg gradient-custom-4 text-body  ">Se connecter</button>
                                     </div>
-                                    
-                                    <?php if (isset($_SESSION['email']) == true) { ?>  <!-- si l'utilisateur est connecté, on affiche le bouton de déconnexion -->
-                                     <a style="color:red;" class="d-flex justify-content-center mt-3" title="Cliquez ici pour vous déconnecter"href='deco.php'>Déconnexion</a>
                                     <?php } ?>
 
                                     <?php if (isset($_SESSION['email']) == false) { ?>

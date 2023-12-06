@@ -1,5 +1,5 @@
 <?php
-
+session_start();  
 require_once("dao.php");
 
 $dao = new DAO();
@@ -8,7 +8,7 @@ $livres = $dao->getLivre();
 
 
 
-$dao->disconnect();
+
 
 ?>
 
@@ -19,8 +19,9 @@ $dao->disconnect();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Liste des livres</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    
     
     
    
@@ -29,27 +30,33 @@ $dao->disconnect();
 <body>
 <nav class="navbar navbar-expand-lg bg-dark mb-5">
             <div class="container-fluid">
-                <a class="navbar-brand text-white" href="#">MyBiblio</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                <a class="navbar-brand text-white" href="LoginPage.php">MyBiblio</a>
+               
                 <div class="collapse navbar-collapse " id="navbarSupportedContent">
+                
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <?php if (isset($_SESSION['email']) == true) { ?>
                         <li class="nav-item">
                             <a class="nav-link active text-white" aria-current="page" href="#">Membres</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="#">Ajout livres</a>
+                            <a class="nav-link text-secondary" href="#">Livres</a>
                         </li>
+                    <?php } ?>
                     </ul>
+                
+                    <?php if (isset($_SESSION['email']) == false) { ?>
+                   <a style="color:white;" href="inscription.php">Inscription</a>
+                   <?php }else{ ?>
+                    <a style="color:red;" class="d-flex justify-content-center " title="Cliquez ici pour vous déconnecter"href='deco.php'>Déconnexion</a>
 
-                   <a style="color:white;" href="LoginPage.php">se connecter</a>
-
+                    <?php } ?>
                 </div>
             </div>
         </nav>
 
+ <div class="container mt-3">
     <table id="example" class="display">
         <thead>
             <tr>
@@ -78,7 +85,6 @@ $dao->disconnect();
             </form>
             </tr>
        
-            
 
             <!-- Modal -->
             <div class="modal fade" id="livreModal<?php echo $livre['id_livre']; ?>" tabindex="-1" role="dialog" aria-labelledby="livreModalLabel<?php echo $livre['id_livre']; ?>">
@@ -129,6 +135,14 @@ $dao->disconnect();
         </tbody>
     </table>
 
+    </div>
+
+     <!-- Footer -->
+     <footer class="navbar navbar-expand-lg bg-dark text-white mt-5 ">
+    <div class="container-fluid d-flex justify-content-center ">
+        <span class="navbar-brand text-white fs-6 text"> MyBiblio - 2023  </span>
+    </div>
+</footer>
 
     <script src="./script/script.js" > </script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -163,7 +177,6 @@ $("#confirmModalYes").click(function(e) {
 </body>
 
 </html>
-
 
 
 

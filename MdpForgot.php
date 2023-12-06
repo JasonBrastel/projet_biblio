@@ -61,12 +61,13 @@ if ($result > 0)  {                                                             
         .boutonInsc:hover {
             background: #BF9C72; 
         }
+
         body {
-            background-image: url('images/FondPageInscription.jpg');
-            background-size: cover;
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
+        background-image: url('images/FondPageInscription.jpg');
+        background-size: cover;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
         }
 
         section {
@@ -87,7 +88,7 @@ if ($result > 0)  {                                                             
             text-align: center;
             padding: 10px;
         }
-     
+        
     </style>
 
 </head>
@@ -104,11 +105,11 @@ if ($result > 0)  {                                                             
                 <div class="collapse navbar-collapse " id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active text-white" aria-current="page" href="#">Membres</a>
+                            <a class="nav-link active text-white" aria-current="page" href="#"></a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="#">Ajout livres</a>
+                            <a class="nav-link text-white" href="index.php"></a>
                         </li>
                     </ul>
 
@@ -120,7 +121,7 @@ if ($result > 0)  {                                                             
 
 
 
-        <div class="mask d-flex align-items-center h-100 gradient-custom-3">
+        <div class="mask gradient-custom-3">
 
             <div class="container">
 
@@ -174,14 +175,15 @@ if ($result > 0)  {                                                             
 
     </section>
 
-
-
-
     <footer class="navbar navbar-expand-lg bg-dark text-white mt-5">
-    <div class="container-fluid">
-        <span class="navbar-brand text-white fs-6 text">MyBiblio - 2023</span>
+    <div class="container-fluid d-flex justify-content-center">
+        <span class="navbar-brand text-white fs-6 " >MyBiblio - 2023</span>
     </div>
 </footer>
+
+
+
+
 
 
 
