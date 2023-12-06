@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 require_once("dao.php");
 
 $dao = new DAO();
@@ -12,6 +12,17 @@ $dispoStatus = $dao->statusDispo();
 $id_livre = $dao->get_livre();
 $liste_utilisateur = $dao->getUtilisateur();
 
+if ($_POST) {
+    $dao->ajoutLivre();
+    $dao->getAuteursbyName($_POST['nom_auteur']);
+    $dao->getGenreByName($_POST['genre']);
+    
+    $dao->getIsbn($_POST['isbn']);
+   
+
+}
+$selectGenre = $dao-> getGenre();
+$selectAuteur = $dao-> getAuteurDatalist();
 
 
 
@@ -24,12 +35,15 @@ $liste_utilisateur = $dao->getUtilisateur();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Liste des livres</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="style/style.css">
 </head>
 
+
 <body>
+
 
     <nav class="navbar navbar-expand-lg bg-dark mb-5">
         <div class="container-fluid">
@@ -58,8 +72,42 @@ $liste_utilisateur = $dao->getUtilisateur();
             </div>
         </div>
     </nav>
+<section>
 
+<form method="POST">
+
+<input type="text" name="titre_livre" placeholder="Titre du livre" required />
+<input type="text" name="isbn" placeholder="ISBN" required />
+<input type="text" list="choix_auteur" name="nom_auteur" placeholder="Nom de l'auteur" required/>
+
+        <datalist id ="choix_auteur">
+            <?php foreach ($selectAuteur as $row){?> 
+        <option value="<?php print $row['nom_auteur'];?>" ><?php print $row['nom_auteur'];?></option>
+        <?php } ?>
+        </datalist>
+  
+<input type="date" name="date_parution" name="trip-start" value="" required/>
+<input type="text" name="nombrePage" placeholder="Nombre de pages"required/>
+<input type="text" name="long_description" placeholder="Description longue" />
+<input type="text" name="short_description" placeholder="Description courte" />
+<input type="text" name="quantity" placeholder="Nombre de livre" />
+<select name="genre" >
+    <?php foreach ($selectGenre as $livre) {?>
+    <option value="<?php print $livre["id_genre"]?>"><?php print $livre["nom_genre"]?> </option>
+<?php } ?>
+</select>
+
+<button name="btn_ajouter" type="submit">Ajouter</button>
+
+</form>
+</body>
+<footer>
+
+
+</section>
     <div class="container mt-3 ">
+
+
         <table id="example" class="table ">
             <thead>
                 <tr>
@@ -140,6 +188,8 @@ $liste_utilisateur = $dao->getUtilisateur();
 
         <section>
 
+<article>
+
 
             <form method="POST" action="emprunt.php">
                 <select name="utilisateur">
@@ -149,11 +199,13 @@ $liste_utilisateur = $dao->getUtilisateur();
                                                                                         print $utilisateur["prenom_utilisateur"] ?> </option>
                     <?php } ?>
                 </select>
-                <input type="text" list="choix_livre_emprunt" name="liste_livre">
+
+                <input type="text" list="choix_livre_emprunt" name="liste_livre_emprunt">
                 <datalist id="choix_livre_emprunt">
                     <?php foreach ($id_livre as $book) {
                         if ($book['disponibilite_id'] == 0) { ?>
-                            <option value="<?php print $book['id_livre'] ?>"><?php print $book['titre_livre'] ?></option>
+                            <option value="<?php print $book['titre_livre'] ?>"><?php print $book['titre_livre'] ?></option>
+
                     <?php  }
                     } ?>
 
@@ -163,7 +215,10 @@ $liste_utilisateur = $dao->getUtilisateur();
             </form>
 
 
+            </article>
+            <article>
 
+         
 
             <form method="POST" action="rendu.php">
                 <select name="utilisateur">
@@ -175,11 +230,13 @@ $liste_utilisateur = $dao->getUtilisateur();
                 </select>
 
 
-                <input type="text" list="choix_livre_rendu" name="liste_livre">
+
+                <input type="text" list="choix_livre_rendu" name="liste_livre_rendu">
                 <datalist id="choix_livre_rendu">
                     <?php foreach ($id_livre as $book) {
                         if ($book['disponibilite_id'] == 1) { ?>
-                            <option value="<?php print $book['id_livre'] ?>"><?php print $book['titre_livre'] ?></option>
+                            <option value="<?php print $book['titre_livre'] ?>"><?php print $book['titre_livre'] ?></option>
+
                     <?php  } else {
                         }
                     } ?>
@@ -189,8 +246,21 @@ $liste_utilisateur = $dao->getUtilisateur();
 
             </form>
 
-
+            </article>
         </section>
+
+
+    
+
+</div>
+      
+      <!-- Footer -->
+       <footer class="navbar navbar-expand-lg bg-dark text-white mt-5 ">
+           <div class="container-fluid d-flex justify-content-center ">
+            <span class="navbar-brand text-white fs-6 text"> MyBiblio - 2023 </span>
+            </div>
+        </footer>
+
 
         <script src="./script/script.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -222,8 +292,9 @@ $liste_utilisateur = $dao->getUtilisateur();
             });
         </script>
         <?php $dao->disconnect(); ?>
-    </div>
+
 
 </body>
+
 
 </html>

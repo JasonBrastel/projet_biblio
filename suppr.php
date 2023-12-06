@@ -10,10 +10,13 @@ $dao->connexion();                                                       //on se
 
 
 if (isset($_POST['btn_suppr'])){ 
+
+
     $dao->suppr_livre($_POST['btn_suppr']); }
 header('location:index.php');    
 
 
 $dao->disconnect();  
+
 
 ?>
