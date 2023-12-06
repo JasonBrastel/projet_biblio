@@ -7,10 +7,15 @@
 .non-dispo {
     background-color: red !important;
     color: white !important;
-    opacity: 80% !important;
+    opacity: 80% !important ;
 }
 
 .details-btn{
     width: 150px !important;
     margin: 5px !important;
+}
+
+.dispo-col{
+    text-align: center !important;
+    vertical-align: middle !important;
 }
