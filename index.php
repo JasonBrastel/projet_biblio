@@ -1,11 +1,10 @@
 <?php
 session_start();
 require_once("dao.php");
-
 $dao = new DAO();
 $dao->connexion();
 $livres = $dao->getLivre();
-
+==
 // Récupère les statuts de disponibilité des livres
 $dispoStatus = $dao->statusDispo();
 
@@ -23,14 +22,14 @@ if ($_POST) {
 }
 $selectGenre = $dao-> getGenre();
 $selectAuteur = $dao-> getAuteurDatalist();
+?>
+
 
 
 
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -110,10 +109,13 @@ $selectAuteur = $dao-> getAuteurDatalist();
 <button style="font-family: 'Roboto Slab', serif;" type="submit" name="btn_ajouter" class="btn btn-dark details-btn" >Ajouter</button>
 </div>
 </form>
+
 </div>
 
 
+
 </section>
+  
     <div class="container mt-3 ">
 
 
