@@ -143,6 +143,12 @@ class DAO
 
     }
 
+    function getStock($param ){
+        
+    $sql="SELECT * FROM stock WHERE id_livre = $param ";
+    return $this->getResultat($sql);
+
+    }
 
 
     function get_livre_utilisateur($name){
@@ -288,7 +294,7 @@ class DAO
 
 
 
-
+    //FONCTION POUR EMPRUNTER UN LIVRE
     function emprunt_livre($param){
 
 
@@ -297,36 +303,48 @@ class DAO
            
         
             $idlivre = $param;
-            $sql="UPDATE livres SET disponibilite_id = 1 WHERE id_livre = $idlivre";
-            $this->bdd->query($sql);
             $id_util = $_POST['utilisateur'];
             $sql1="INSERT INTO livre_utilisateur (`id_livre`,`id_utilisateur`) VALUES (?,?)";
             $query = $this->bdd->prepare($sql1);
             $query->execute([$idlivre, $id_util]);
+            $sql2="UPDATE stock SET Nombre_livre = Nombre_livre-1 WHERE id_livre = $idlivre";
+            $this->bdd->query($sql2);
+
 
             
+            if($this->getStock($param) == 0){
+                $sql="UPDATE livres SET disponibilite_id = 1 WHERE id_livre = $idlivre";
+                $this->bdd->query($sql);
+                }
+
             }
                
         }
     
+        //FONCTION QUAND UN LIVRE EST RENDU
         function rendu_livre($param){
 
 
             if(isset($_POST['liste_livre_rendu'])){
    
                 $idlivre = $param;
-                $sql="UPDATE livres SET disponibilite_id = 0 WHERE id_livre = $idlivre";
-                $this->bdd->query($sql);
+               
                 $id_util = $_POST['utilisateur'];
 
                 $sql1="DELETE FROM livre_utilisateur WHERE id_livre =  $idlivre AND id_utilisateur = $id_util";
                 $this->bdd->query($sql1);
+                $sql2="UPDATE stock SET Nombre_livre = Nombre_livre+1 WHERE id_livre = $idlivre";
+                $this->bdd->query($sql2);
 
-                }
+
+                if($this->getStock($param) != 0 ){
+                    $sql="UPDATE livres SET disponibilite_id = 0 WHERE id_livre = $idlivre";
+                    $this->bdd->query($sql);
+                    }
                    
             }
-
-        
+        }
+        // FONCTION POUR SUPPRIMER LE LIVRE DE LA BDD
     function suppr_livre($idlivre){
 
         $sql="DELETE FROM livres WHERE id_livre LIKE $idlivre";
@@ -335,9 +353,11 @@ class DAO
 
     }
 
+
 //JASON
 	/* méthode qui renvoit tous les résultats sous forme de tableau
 	*/
+
 	public function getLivre() {
 		$sql="SELECT image, titre_livre, isbn, shortDescription,id_livre FROM livres;";
 		return $this->getResults($sql);
@@ -352,7 +372,7 @@ class DAO
 
 
 
-//DAVID
+    //DAVID
     //fonction pour ajouter des utilisateurs depuis le formulaire d'inscription:
         
     //mettre en paramètre les données stockées en POST    
@@ -446,7 +466,7 @@ class DAO
     // Retourner le tableau des statuts de disponibilité
     return $statusArray;
 }
-
-}
+        }
+    
 ?>
 
