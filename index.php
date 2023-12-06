@@ -12,6 +12,17 @@ $dispoStatus = $dao->statusDispo();
 $id_livre = $dao->get_livre();
 $liste_utilisateur = $dao->getUtilisateur();
 
+if ($_POST) {
+    $dao->ajoutLivre();
+    $dao->getAuteursbyName($_POST['nom_auteur']);
+    $dao->getGenreByName($_POST['genre']);
+    var_dump($dao->getAuteursbyName($_POST['nom_auteur']));
+    $dao->getIsbn($_POST['isbn']);
+   
+
+}
+$selectGenre = $dao-> getGenre();
+$selectAuteur = $dao-> getAuteurDatalist();
 
 
 
@@ -61,8 +72,42 @@ $liste_utilisateur = $dao->getUtilisateur();
             </div>
         </div>
     </nav>
+<section>
 
+<form method="POST">
+
+<input type="text" name="titre_livre" placeholder="Titre du livre" required />
+<input type="text" name="isbn" placeholder="ISBN" required />
+<input type="text" list="choix_auteur" name="nom_auteur" placeholder="Nom de l'auteur" required/>
+
+        <datalist id ="choix_auteur">
+            <?php foreach ($selectAuteur as $row){?> 
+        <option value="<?php print $row['nom_auteur'];?>" ><?php print $row['nom_auteur'];?></option>
+        <?php } ?>
+        </datalist>
+  
+<input type="date" name="date_parution" name="trip-start" value="" required/>
+<input type="text" name="nombrePage" placeholder="Nombre de pages"required/>
+<input type="text" name="long_description" placeholder="Description longue" />
+<input type="text" name="short_description" placeholder="Description courte" />
+<input type="text" name="quantity" placeholder="Nombre de livre" />
+<select name="genre" >
+    <?php foreach ($selectGenre as $livre) {?>
+    <option value="<?php print $livre["id_genre"]?>"><?php print $livre["nom_genre"]?> </option>
+<?php } ?>
+</select>
+
+<button name="btn_ajouter" type="submit">Ajouter</button>
+
+</form>
+</body>
+<footer>
+
+
+</section>
     <div class="container mt-3 ">
+
+
         <table id="example" class="table ">
             <thead>
                 <tr>
@@ -143,6 +188,8 @@ $liste_utilisateur = $dao->getUtilisateur();
 
         <section>
 
+<article>
+
 
             <form method="POST" action="emprunt.php">
                 <select name="utilisateur">
@@ -168,7 +215,10 @@ $liste_utilisateur = $dao->getUtilisateur();
             </form>
 
 
+            </article>
+            <article>
 
+         
 
             <form method="POST" action="rendu.php">
                 <select name="utilisateur">
@@ -196,8 +246,12 @@ $liste_utilisateur = $dao->getUtilisateur();
 
             </form>
 
-
+            </article>
         </section>
+
+
+    
+
 </div>
       
       <!-- Footer -->
@@ -238,7 +292,7 @@ $liste_utilisateur = $dao->getUtilisateur();
             });
         </script>
         <?php $dao->disconnect(); ?>
-    
+
 
 </body>
 
