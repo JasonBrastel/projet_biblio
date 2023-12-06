@@ -84,6 +84,23 @@ class DAO
             return $declaration->fetchAll();
         }
     }
+
+    public function getAlone($requete, $param)
+    {
+
+        $resultat = array();
+
+        $declaration = $this->bdd->prepare($requete);
+
+        if (!$declaration) {
+
+            $this->error = $this->bdd->erreurInformation();
+            return false;
+        } else {
+            $declaration->execute($param);
+            return $declaration->fetch();
+        }
+    }
     //FONCTION POUR RECUPERER IBSN DES LIVRES
     function getIsbn($isbn){
 
@@ -98,6 +115,14 @@ class DAO
 
         $sql="SELECT id_livre, titre_livre, disponibilite_id FROM `livres`";
         return $this->getResultat($sql);
+        
+    }
+
+
+    function get_livre_emprunt($param = []){
+
+        $sql="SELECT * FROM `livres` where titre_livre = :inputTitre";
+        return $this->getAlone($sql, $param);
         
     }
 
@@ -263,14 +288,16 @@ class DAO
 
 
 
-    function emprunt_livre(){
-        
-        if(isset($_POST['liste_livre'])){
+
+    function emprunt_livre($param){
+
+
+        if(isset($_POST['liste_livre_emprunt'])){
 
            
         
-            $idlivre = $_POST['liste_livre'];
-            $sql="UPDATE livres SET disponibilite_id = 1 WHERE id_livre LIKE $idlivre";
+            $idlivre = $param;
+            $sql="UPDATE livres SET disponibilite_id = 1 WHERE id_livre = $idlivre";
             $this->bdd->query($sql);
             $id_util = $_POST['utilisateur'];
             $sql1="INSERT INTO livre_utilisateur (`id_livre`,`id_utilisateur`) VALUES (?,?)";
@@ -282,13 +309,13 @@ class DAO
                
         }
     
-        function rendu_livre(){
+        function rendu_livre($param){
 
 
-            if(isset($_POST['liste_livre'])){
+            if(isset($_POST['liste_livre_rendu'])){
    
-                $idlivre = $_POST['liste_livre'];
-                $sql="UPDATE livres SET disponibilite_id = 0 WHERE id_livre LIKE $idlivre";
+                $idlivre = $param;
+                $sql="UPDATE livres SET disponibilite_id = 0 WHERE id_livre = $idlivre";
                 $this->bdd->query($sql);
                 $id_util = $_POST['utilisateur'];
 
@@ -392,12 +419,9 @@ class DAO
         return $this->getMailMdp($sql);                                             //on retourne le résultat de la requête                                  
     }
 
+   
+}
 
-
-
-
-
-    
 
  //PAUL 
    // fonction changment de status de la dispo dans datatable 

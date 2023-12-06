@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once("dao.php");
+
 $dao = new DAO();
 $dao->connexion();
 $livres = $dao->getLivre();
@@ -30,7 +31,7 @@ $liste_utilisateur = $dao->getUtilisateur();
 </head>
 
 
-
+<body>
 
 
     <nav class="navbar navbar-expand-lg bg-dark mb-5">
@@ -151,11 +152,13 @@ $liste_utilisateur = $dao->getUtilisateur();
                                                                                         print $utilisateur["prenom_utilisateur"] ?> </option>
                     <?php } ?>
                 </select>
-                <input type="text" list="choix_livre_emprunt" name="liste_livre">
+
+                <input type="text" list="choix_livre_emprunt" name="liste_livre_emprunt">
                 <datalist id="choix_livre_emprunt">
                     <?php foreach ($id_livre as $book) {
                         if ($book['disponibilite_id'] == 0) { ?>
-                            <option value="<?php print $book['id_livre'] ?>"><?php print $book['titre_livre'] ?></option>
+                            <option value="<?php print $book['titre_livre'] ?>"><?php print $book['titre_livre'] ?></option>
+
                     <?php  }
                     } ?>
 
@@ -177,11 +180,13 @@ $liste_utilisateur = $dao->getUtilisateur();
                 </select>
 
 
-                <input type="text" list="choix_livre_rendu" name="liste_livre">
+
+                <input type="text" list="choix_livre_rendu" name="liste_livre_rendu">
                 <datalist id="choix_livre_rendu">
                     <?php foreach ($id_livre as $book) {
                         if ($book['disponibilite_id'] == 1) { ?>
-                            <option value="<?php print $book['id_livre'] ?>"><?php print $book['titre_livre'] ?></option>
+                            <option value="<?php print $book['titre_livre'] ?>"><?php print $book['titre_livre'] ?></option>
+
                     <?php  } else {
                         }
                     } ?>
@@ -193,6 +198,7 @@ $liste_utilisateur = $dao->getUtilisateur();
 
 
         </section>
+
       
       <!-- Footer -->
        <footer class="navbar navbar-expand-lg bg-dark text-white mt-5 ">
@@ -200,6 +206,7 @@ $liste_utilisateur = $dao->getUtilisateur();
             <span class="navbar-brand text-white fs-6 text"> MyBiblio - 2023 </span>
             </div>
         </footer>
+
 
         <script src="./script/script.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -234,5 +241,6 @@ $liste_utilisateur = $dao->getUtilisateur();
     </div>
 
 </body>
+
 
 </html>
