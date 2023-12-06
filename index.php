@@ -198,7 +198,7 @@ $liste_utilisateur = $dao->getUtilisateur();
 
 
         </section>
-
+</div>
       
       <!-- Footer -->
        <footer class="navbar navbar-expand-lg bg-dark text-white mt-5 ">
@@ -238,7 +238,7 @@ $liste_utilisateur = $dao->getUtilisateur();
             });
         </script>
         <?php $dao->disconnect(); ?>
-    </div>
+    
 
 </body>
 
