@@ -25,6 +25,13 @@ $selectGenre = $dao-> getGenre();
 $selectAuteur = $dao-> getAuteurDatalist();
 
 
+if ($_POST && isset($_POST['btn_ajouter_utilisateur'])) {
+    $nom = $_POST['nom'];
+    $prenom = $_POST['prenom'];
+    $email = $_POST['email'];
+
+    $dao->ajoutUtilisateur($nom, $prenom, $email, $motDePasse, $tel);
+}
 
 ?>
 
@@ -76,32 +83,48 @@ $selectAuteur = $dao-> getAuteurDatalist();
 
 <form method="POST">
 
-<input type="text" name="titre_livre" placeholder="Titre du livre" required />
-<input type="text" name="isbn" placeholder="ISBN" required />
-<input type="text" list="choix_auteur" name="nom_auteur" placeholder="Nom de l'auteur" required/>
+ <input type="text" name="titre_livre" placeholder="Titre du livre" required />
+ <input type="text" name="isbn" placeholder="ISBN" required />
+ <input type="text" list="choix_auteur" name="nom_auteur" placeholder="Nom de l'auteur" required/>
 
         <datalist id ="choix_auteur">
             <?php foreach ($selectAuteur as $row){?> 
-        <option value="<?php print $row['nom_auteur'];?>" ><?php print $row['nom_auteur'];?></option>
-        <?php } ?>
+            <option value="<?php print $row['nom_auteur'];?>" ><?php print $row['nom_auteur'];?></option>
+            <?php } ?>
         </datalist>
   
-<input type="date" name="date_parution" name="trip-start" value="" required/>
-<input type="text" name="nombrePage" placeholder="Nombre de pages"required/>
-<input type="text" name="long_description" placeholder="Description longue" />
-<input type="text" name="short_description" placeholder="Description courte" />
-<input type="text" name="quantity" placeholder="Nombre de livre" />
-<select name="genre" >
+ <input type="date" name="date_parution" name="trip-start" value="" required/>
+ <input type="text" name="nombrePage" placeholder="Nombre de pages"required/>
+ <input type="text" name="long_description" placeholder="Description longue" />
+ <input type="text" name="short_description" placeholder="Description courte" />
+ <input type="text" name="quantity" placeholder="Nombre de livre" />
+  <select name="genre" >
     <?php foreach ($selectGenre as $livre) {?>
     <option value="<?php print $livre["id_genre"]?>"><?php print $livre["nom_genre"]?> </option>
-<?php } ?>
-</select>
+    <?php } ?>
+  </select>
 
-<button name="btn_ajouter" type="submit">Ajouter</button>
+  <button name="btn_ajouter" type="submit">Ajouter</button>
 
 </form>
-</body>
-<footer>
+
+<!-- Ajouter un utilisateur -->
+
+<div class="container mt-3">
+
+        <h2>Ajouter un utilisateur</h2>
+
+        <form action="" method="post">
+            
+            <input type="text" name="nom" placeholder="Nom" required>
+            <input type="text" name="prenom" placeholder="Prénom" required>
+            <input type="email" name="email" placeholder="Mail" required>
+
+            <button name="btn_ajouter_utilisateur" type="submit">Ajouter utilisateur</button>
+            
+        </form>
+    </div>
+</form>
 
 
 </section>

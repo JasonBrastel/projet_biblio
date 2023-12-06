@@ -424,8 +424,8 @@ class DAO
 
 
  //PAUL 
+
    // fonction changment de status de la dispo dans datatable 
-   
    public function statusDispo()
 {
     // Requête SQL pour sélectionner les ID des livres et leurs statuts de disponibilité
@@ -445,6 +445,23 @@ class DAO
 
     // Retourner le tableau des statuts de disponibilité
     return $statusArray;
+}
+
+//fonction pour ajouter des utilisateur
+public function ajoutUtilisateur($nom, $prenom, $email) {
+    
+    // Utilise une requête SQL pour insérer l'utilisateur
+    $query = "INSERT INTO utilisateur (nom_utilisateur, prenom_utilisateur, mail_utilisateur) 
+              VALUES (:nom, :prenom, :email)";
+
+    $params = array(
+        ":nom" => $nom,
+        ":prenom" => $prenom,
+        ":email" => $email,
+    );
+
+    $stmt = $this->bdd->prepare($query);
+    $stmt->execute($params);
 }
 
 }
