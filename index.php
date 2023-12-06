@@ -16,7 +16,7 @@ if ($_POST) {
     $dao->ajoutLivre();
     $dao->getAuteursbyName($_POST['nom_auteur']);
     $dao->getGenreByName($_POST['genre']);
-    var_dump($dao->getAuteursbyName($_POST['nom_auteur']));
+    
     $dao->getIsbn($_POST['isbn']);
    
 

@@ -11,9 +11,9 @@ $dao->connexion();                                                       //on se
 
 if (isset($_POST['btn_suppr'])){ 
 
-    $dao->suppr_user($_POST['btn_suppr']); }
-header('location:page_utilisateur.php');    
 
+    $dao->suppr_livre($_POST['btn_suppr']); }
+header('location:index.php');    
 
 
 $dao->disconnect();  

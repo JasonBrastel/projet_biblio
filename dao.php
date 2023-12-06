@@ -219,7 +219,7 @@ class DAO
                 $last_id_livre = $this->bdd->lastInsertId();
 
                 //J'insere dans la table livres_genres
-                $sql3="INSERT INTO livres_genres (`id_livre`,`id_genre`) VALUES (?,?)";
+                $sql3="INSERT INTO livres_genres (`livre_id`,`genre_id`) VALUES (?,?)";
 
                 $query = $this->bdd->prepare($sql3);
                 $query->execute([$last_id_livre,$genre]);
@@ -233,7 +233,7 @@ class DAO
                 $query =$this->bdd->prepare($sql5);
                 $query->execute([$_POST['quantity']]);
 
-                header('location:ajoutlivre.php');
+                header('location:index.php');
 
                 //Comptage des lignes a l'issu de la requete inclu dans la fonction "getIsbn" SI le resultat est 0, c'est que l'ISBN n'existe pas dans la BDD donc le livre peut etre ajouté
                 } elseif (count($this->getIsbn(($_POST['isbn']))) == 0) {
@@ -243,7 +243,7 @@ class DAO
     
                     $last_id_livre = $this->bdd->lastInsertId();
     
-                    $sql3="INSERT INTO livres_genres (`id_livre`,`id_genre`) VALUES (?,?)";
+                    $sql3="INSERT INTO livres_genres (`livre_id`,`genre_id`) VALUES (?,?)";
                     $query =$this->bdd->prepare($sql3);
                     $query->execute([$last_id_livre,$genre]);
                     
@@ -255,11 +255,11 @@ class DAO
                     $query->execute([$_POST['quantity']]);
                 
 
-                header('location:ajoutlivre.php');
+                header('location:index.php');
 
                 //Comptage des lignes a l'issu de la requete inclu dans la fonction "getIsbn" SI le resultat est différent de 0 , c'est que l'ISBN existe dans la BDD 
                 } elseif (count($this->getIsbn(($_POST['isbn']))) != 0) {
-                print("Le livre existe deja dans la BDD");
+                
                 }
 
                 //Comptage des lignes a l'issu de la requete inclu dans la fonction "getAuteursByName" SI le resultat est différent de 0, c'est que l'auteur existe deja, donc on ajoute tout sauf l'auteur
@@ -280,7 +280,7 @@ class DAO
                 $query =$this->bdd->prepare($sql5);
                 $query->execute([$_POST['quantity']]);
 
-                header('location:ajoutlivre.php');
+                header('location:index.php');
 
             }   
         }     
