@@ -9,11 +9,9 @@ $dao->connexion();                                                       //on se
 
 
 
-if (isset($_POST['btn_suppr'])){ 
-    $dao->suppr_livre($_POST['btn_suppr']); }
+if (isset($_POST['btn_emprunt'])){ 
+
+    $dao->emprunt_livre($_POST['btn_emprunt']); }
+
 header('location:index.php');    
-
-
-$dao->disconnect();  
-
 ?>
