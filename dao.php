@@ -81,7 +81,6 @@ class DAO
             $this->error = $this->bdd->erreurInformation();
             return false;
         } else {
-
             return $declaration->fetchAll();
         }
     }
@@ -182,6 +181,7 @@ class DAO
                 $query = $this->bdd->prepare($sql);
                 $query ->execute([NULL,$nom_auteur]);
 
+
                 //je recupere l'ID de la derniere requete INSERT effecutée et je la stocke dans une variable pour pouvoir la réutiliser apres
                 $last_id_auteur = $this->bdd->lastInsertId();
 
@@ -263,7 +263,6 @@ class DAO
 
 
 
-
     function emprunt_livre(){
         
         if(isset($_POST['liste_livre'])){
@@ -301,11 +300,11 @@ class DAO
             }
 
         
-
     function suppr_livre($idlivre){
 
         $sql="DELETE FROM livres WHERE id_livre LIKE $idlivre";
         $this->bdd->query($sql);
+
 
     }
 
@@ -422,10 +421,6 @@ class DAO
 
     // Retourner le tableau des statuts de disponibilité
     return $statusArray;
-}
-
-
-
 }
 
 
