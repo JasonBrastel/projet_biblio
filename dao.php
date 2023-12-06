@@ -93,13 +93,15 @@ class DAO
         var_dump($sql);
     }
 
+
+
     function get_livre(){
 
         $sql="SELECT id_livre, titre_livre, disponibilite_id FROM `livres`";
         return $this->getResultat($sql);
         
-
     }
+
 
     //FONCTION POUR RECUPERER LES GENRES DE LIVRES
     function getGenre(){
@@ -116,6 +118,8 @@ class DAO
         return $this->getResultat($sql);
 
     }
+
+
 
     function get_livre_utilisateur($name){
 
@@ -136,6 +140,7 @@ class DAO
         return $this->getResultat($sql);
 
     }
+
 
     //FONCTION POUR RECUPERER LES NOMS DES AUTEURS 
     function getAuteursByName($name)
@@ -257,6 +262,8 @@ class DAO
     }
 
 
+
+
     function emprunt_livre(){
         
         if(isset($_POST['liste_livre'])){
@@ -294,11 +301,12 @@ class DAO
             }
 
         
+
     function suppr_livre($idlivre){
 
         $sql="DELETE FROM livres WHERE id_livre LIKE $idlivre";
         $this->bdd->query($sql);
-       
+
     }
 
 //JASON
@@ -384,6 +392,39 @@ class DAO
         $sql = "SELECT * FROM utilisateurs WHERE mail_utilisateur = '$email'";      //requête SQL pour sélectionner l'email dans la BDD
         return $this->getMailMdp($sql);                                             //on retourne le résultat de la requête                                  
     }
+
+
+
+
+
+
+    
+
+ //PAUL 
+   // fonction changment de status de la dispo dans datatable 
+   
+   public function statusDispo()
+{
+    // Requête SQL pour sélectionner les ID des livres et leurs statuts de disponibilité
+    $sql = "SELECT id_livre, disponibilite_id FROM livres";
+
+    // Récupérer les résultats de la requête
+    $results = $this->getResults($sql);
+
+    // Initialiser un tableau pour stocker les statuts de disponibilité des livres
+    $statusArray = array();
+
+    // Parcourir les résultats de la requête pour construire le tableau des statuts
+    foreach ($results as $result) {
+        // Utiliser l'ID du livre comme clé et le statut de disponibilité comme valeur dans le tableau
+        $statusArray[$result['id_livre']] = $result['disponibilite_id'];
+    }
+
+    // Retourner le tableau des statuts de disponibilité
+    return $statusArray;
+}
+
+
 
 }
 
