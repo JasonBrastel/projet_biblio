@@ -219,7 +219,7 @@ class DAO
                 $last_id_livre = $this->bdd->lastInsertId();
 
                 //J'insere dans la table livres_genres
-                $sql3="INSERT INTO livres_genres (`id_livre`,`id_genre`) VALUES (?,?)";
+                $sql3="INSERT INTO livres_genres (`livre_id`,`genre_id`) VALUES (?,?)";
 
                 $query = $this->bdd->prepare($sql3);
                 $query->execute([$last_id_livre,$genre]);
@@ -233,7 +233,7 @@ class DAO
                 $query =$this->bdd->prepare($sql5);
                 $query->execute([$_POST['quantity']]);
 
-                header('location:ajoutlivre.php');
+                header('location:index.php');
 
                 //Comptage des lignes a l'issu de la requete inclu dans la fonction "getIsbn" SI le resultat est 0, c'est que l'ISBN n'existe pas dans la BDD donc le livre peut etre ajouté
                 } elseif (count($this->getIsbn(($_POST['isbn']))) == 0) {
@@ -243,7 +243,7 @@ class DAO
     
                     $last_id_livre = $this->bdd->lastInsertId();
     
-                    $sql3="INSERT INTO livres_genres (`id_livre`,`id_genre`) VALUES (?,?)";
+                    $sql3="INSERT INTO livres_genres (`livre_id`,`genre_id`) VALUES (?,?)";
                     $query =$this->bdd->prepare($sql3);
                     $query->execute([$last_id_livre,$genre]);
                     
@@ -255,11 +255,11 @@ class DAO
                     $query->execute([$_POST['quantity']]);
                 
 
-                header('location:ajoutlivre.php');
+                header('location:index.php');
 
                 //Comptage des lignes a l'issu de la requete inclu dans la fonction "getIsbn" SI le resultat est différent de 0 , c'est que l'ISBN existe dans la BDD 
                 } elseif (count($this->getIsbn(($_POST['isbn']))) != 0) {
-                print("Le livre existe deja dans la BDD");
+                
                 }
 
                 //Comptage des lignes a l'issu de la requete inclu dans la fonction "getAuteursByName" SI le resultat est différent de 0, c'est que l'auteur existe deja, donc on ajoute tout sauf l'auteur
@@ -280,7 +280,7 @@ class DAO
                 $query =$this->bdd->prepare($sql5);
                 $query->execute([$_POST['quantity']]);
 
-                header('location:ajoutlivre.php');
+                header('location:index.php');
 
             }   
         }     
@@ -348,27 +348,6 @@ class DAO
 		return $this->getResults($sql);
 	}
 	
-    // Retourner le tableau des statuts de disponibilité
-    return $statusArray;
-
-}
-    public function getUtilisateurLivreEmprunte() {
-        $sql="SELECT nom_utilisateur, prenom_utilisateur,identifiant_utilisateur, utilisateurs.id_utilisateur,titre_livre FROM `utilisateurs` INNER JOIN livre_utilisateur ON utilisateurs.id_utilisateur= livre_utilisateur.id_utilisateur INNER JOIN livres ON livres.id_livre = livre_utilisateur.id_livre WHERE type_utilisateur LIKE '%0' ORDER BY nom_utilisateur;";
-
-
-        
-        return $this->getResults($sql);
-
-}
-
-
-function suppr_user($user){
-
-    $sql="DELETE FROM utilisateurs WHERE id_utilisateur LIKE $user";
-    $this->bdd->query($sql);
-
-
-}
 
 
 
@@ -440,29 +419,11 @@ function suppr_user($user){
         return $this->getMailMdp($sql);                                             //on retourne le résultat de la requête                                  
     }
 
-
-    //Fonction pour afficher le catalogue de livre
-	public function getLivre() {
-		$sql="SELECT image, titre_livre, isbn, shortDescription,id_livre FROM livres;";
-		return $this->getResults($sql);
-	}
-	
-	public function getDelete() {
-		$sql="SELECT image, titre_livre, isbn, shortDescription,id_livre FROM livres;";
-		return $this->getResults($sql);
-	}
+   
 
 
 
- //fonction pour afficher liste utlisateur
-    public function getUtilisateur() {
-        $sql="SELECT nom_utilisateur, prenom_utilisateur,identifiant_utilisateur, id_utilisateur,livre_emprunte FROM `utilisateurs` WHERE type_utilisateur LIKE '%0' ORDER BY nom_utilisateur";
-
-        return $this->getResults($sql);
-
-
-
-
+ //PAUL 
    // fonction changment de status de la dispo dans datatable 
    
    public function statusDispo()
@@ -482,7 +443,9 @@ function suppr_user($user){
         $statusArray[$result['id_livre']] = $result['disponibilite_id'];
     }
 
-
+    // Retourner le tableau des statuts de disponibilité
+    return $statusArray;
+}
 
 }
 ?>
