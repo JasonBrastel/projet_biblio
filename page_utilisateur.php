@@ -1,5 +1,8 @@
 <?php
-session_start();
+session_start();                                              //on démarre la session pour pouvoir utiliser les variables de session
+if (! isset($_SESSION['email'])) {                            //si la variable de session n'existe pas c'est-à-dire si l'utilisateur n'est pas connecté
+    header('Location: LoginPage.php');                        //on redirige vers la page de connexion
+}
 
 require_once("dao.php");
 $dao = new DAO();
@@ -179,5 +182,5 @@ if ($_POST) {
         });
     </script>
 </body>
-
+<?php $dao->disconnect();  ?>
 </html>

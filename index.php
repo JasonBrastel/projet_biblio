@@ -1,5 +1,10 @@
 <?php
-session_start();
+
+
+session_start();                                    //on démarre la session pour pouvoir utiliser les variables de session
+if (! isset($_SESSION['email'])) {                  //si la variable de session n'existe pas ( si l'utilisateur n'est pas connecté)
+    header('Location: LoginPage.php');              //on redirige vers la page de connexion
+}
 require_once("dao.php");
 
 $dao = new DAO();
@@ -43,7 +48,6 @@ $selectAuteur = $dao-> getAuteurDatalist();
 
 
 <body>
-
 
     <nav class="navbar navbar-expand-lg bg-dark mb-5">
         <div class="container-fluid">
@@ -125,7 +129,6 @@ $selectAuteur = $dao-> getAuteurDatalist();
 </section>
 </section>
     <div class="container mt-3 ">
-
 
         <table id="example" class="table ">
             <thead>
@@ -227,7 +230,7 @@ $selectAuteur = $dao-> getAuteurDatalist();
 
 
 
-                <input type="text" list="choix_livre_emprunt" name="liste_livre_emprunt" class="form-control mb-3" placeholder="Titre du livre">
+                <input type="text" list="choix_livre_emprunt" name="liste_livre_emprunt" class="form-control mb-3" placeholder="Titre du livre"required>
 
 
                 <datalist id="choix_livre_emprunt">
@@ -239,8 +242,10 @@ $selectAuteur = $dao-> getAuteurDatalist();
                     } ?>
                 </datalist>
 
+                
                 <button type="submit" id="btn_emprunt" name="btn_emprunt" class="btn btn-dark">Valider l'emprunt</button>
-            </form>
+           
+                 </form>
         </article>
 
         <article class="col-md-6">

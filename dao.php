@@ -9,8 +9,8 @@ class DAO
     //paramètres de connexion à la base de donnée
 
     private $host = "127.0.0.1";
-    private $user = "root";
-    private $password = "";
+    private $user = "employe_biblio";
+    private $password = "Biblio123";
     private $database = "biblio";
     private $charset = "utf8";
 
@@ -135,8 +135,6 @@ class DAO
         
     }
 
-
-
     //FONCTION POUR RECUPERER LES GENRES DE LIVRES
     function getGenre(){
 
@@ -172,6 +170,14 @@ class DAO
 
     //FONCTION POUR RECUPERER LA DISPO DU LIVRE QUI CORRESPOND AU LIVRE SOUHAITE
     function verif_dispo_livre($id_livre){
+
+        $sql="SELECT disponibilite_id FROM livres WHERE id_livre LIKE  $id_livre";
+        return $this->getResultat($sql);
+
+    }
+
+
+    function verif_dispo_livre2($id_livre = []){
 
         $sql="SELECT disponibilite_id FROM livres WHERE id_livre LIKE  $id_livre";
         return $this->getResultat($sql);
@@ -305,8 +311,6 @@ class DAO
     }
 
 
-
-
     function emprunt_livre($param){
 
 
@@ -318,10 +322,7 @@ class DAO
             $idlivre = $param;
             $id_util = $_POST['utilisateur'];
 
-            //INSERTION dans la table livre utilisateur
-            $sql1="INSERT INTO livre_utilisateur (`id_livre`,`id_utilisateur`, `date_emprunt`,`date_retour`) VALUES (?,?,?,?)";
-            $query = $this->bdd->prepare($sql1);
-            $query->execute([$idlivre, $id_util,$dateEmprunt,$dateRetour]);
+        
 
             //Récupération du nombre de livre, dans la table STOCK, par ID de livre
             //SI le nombre de livres est différent de 0 
@@ -330,6 +331,12 @@ class DAO
             //Mise a jour de la table stock a l'endroit qui correspond a l'ID du livre
             $sql2="UPDATE stock SET Nombre_livre = Nombre_livre-1 WHERE id_livre = $idlivre";
             $this->bdd->query($sql2);
+
+            //INSERTION dans la table livre utilisateur
+            $sql1="INSERT INTO livre_utilisateur (`id_livre`,`id_utilisateur`, `date_emprunt`,`date_retour`) VALUES (?,?,?,?)";
+            $query = $this->bdd->prepare($sql1);
+            $query->execute([$idlivre, $id_util,$dateEmprunt,$dateRetour]);
+
             }
             
             //SI le nombre de livre est 0
@@ -363,7 +370,6 @@ class DAO
                 if($this->getStock(["id_livre" =>$param])['Nombre_livre']  >= 1 ){
                 $sql="UPDATE livres SET disponibilite_id = 0 WHERE id_livre = $idlivre";
                 $this->bdd->query($sql);
-
 
                 }
                    

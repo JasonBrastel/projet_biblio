@@ -14,4 +14,5 @@ if (isset($_POST['btn_emprunt'])){
     $dao->emprunt_livre($id_livress['id_livre']); }
 
 header('location:index.php');    
-?>
+$dao->disconnect(); 
+  ?>
