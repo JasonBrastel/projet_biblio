@@ -13,25 +13,40 @@ $id_livre = $dao->get_livre();
 $liste_utilisateur = $dao->getUtilisateur();
 
 if ($_POST) {
-    $dao->ajoutLivre();
-    $dao->getAuteursbyName($_POST['nom_auteur']);
-    $dao->getGenreByName($_POST['genre']);
-    
-    $dao->getIsbn($_POST['isbn']);
-   
+    if (isset($_POST['btn_add_user'])) {
+        // Traitements pour le formulaire d'ajout d'utilisateur
+        $nom_utilisateur = $_POST['nom_utilisateur'];
+        $prenom_utilisateur = $_POST['prenom_utilisateur'];
+        $mail_utilisateur = $_POST['mail_utilisateur'];
+        $tel_utilisateur = $_POST['tel_utilisateur'];
+        $message = $dao->ajoutUtilisateur($nom_utilisateur, $prenom_utilisateur, $mail_utilisateur, $tel_utilisateur);
 
+
+        // Mise à jour du contenu de la div des messages
+        echo '<script>document.getElementById("messageDiv").innerHTML = "' . $message . '";</script>';
+    }
+
+    if (isset($_POST['btn_ajouter'])) {
+        // Traitements pour le formulaire d'ajout de livre
+        $titre_livre = $_POST['titre_livre'];
+        $isbn = $_POST['isbn'];
+        $nom_auteur = $_POST['nom_auteur'];
+        $date_parution = $_POST['date_parution'];
+        $nombrePage = $_POST['nombrePage'];
+        $genre = $_POST['genre'];
+        // ... autres données du formulaire
+        $dao->ajoutLivre($titre_livre, $isbn, $nom_auteur, $date_parution, $nombrePage, $genre);
+    }
+
+    // ... Autres conditions pour d'autres formulaires si nécessaire
 }
-$selectGenre = $dao-> getGenre();
-$selectAuteur = $dao-> getAuteurDatalist();
+$selectGenre = $dao->getGenre();
+$selectAuteur = $dao->getAuteurDatalist();
 
 
-if ($_POST && isset($_POST['btn_ajouter_utilisateur'])) {
-    $nom = $_POST['nom'];
-    $prenom = $_POST['prenom'];
-    $email = $_POST['email'];
 
-    $dao->ajoutUtilisateur($nom, $prenom, $email, $motDePasse, $tel);
-}
+
+
 
 ?>
 
@@ -79,55 +94,61 @@ if ($_POST && isset($_POST['btn_ajouter_utilisateur'])) {
             </div>
         </div>
     </nav>
-<section>
 
-<form method="POST">
 
- <input type="text" name="titre_livre" placeholder="Titre du livre" required />
- <input type="text" name="isbn" placeholder="ISBN" required />
- <input type="text" list="choix_auteur" name="nom_auteur" placeholder="Nom de l'auteur" required/>
+    <section>
 
-        <datalist id ="choix_auteur">
-            <?php foreach ($selectAuteur as $row){?> 
-            <option value="<?php print $row['nom_auteur'];?>" ><?php print $row['nom_auteur'];?></option>
-            <?php } ?>
-        </datalist>
-  
- <input type="date" name="date_parution" name="trip-start" value="" required/>
- <input type="text" name="nombrePage" placeholder="Nombre de pages"required/>
- <input type="text" name="long_description" placeholder="Description longue" />
- <input type="text" name="short_description" placeholder="Description courte" />
- <input type="text" name="quantity" placeholder="Nombre de livre" />
-  <select name="genre" >
-    <?php foreach ($selectGenre as $livre) {?>
-    <option value="<?php print $livre["id_genre"]?>"><?php print $livre["nom_genre"]?> </option>
-    <?php } ?>
-  </select>
+        <form method="POST">
 
-  <button name="btn_ajouter" type="submit">Ajouter</button>
+            <input type="text" name="titre_livre" placeholder="Titre du livre" required />
+            <input type="text" name="isbn" placeholder="ISBN" required />
+            <input type="text" list="choix_auteur" name="nom_auteur" placeholder="Nom de l'auteur" required />
 
-</form>
+            <datalist id="choix_auteur">
+                <?php foreach ($selectAuteur as $row) { ?>
+                    <option value="<?php print $row['nom_auteur']; ?>"><?php print $row['nom_auteur']; ?></option>
+                <?php } ?>
+            </datalist>
 
-<!-- Ajouter un utilisateur -->
+            <input type="date" name="date_parution" name="trip-start" value="" required />
+            <input type="text" name="nombrePage" placeholder="Nombre de pages" required />
+            <input type="text" name="long_description" placeholder="Description longue" />
+            <input type="text" name="short_description" placeholder="Description courte" />
+            <input type="text" name="quantity" placeholder="Nombre de livre" />
+            <select name="genre">
+                <?php foreach ($selectGenre as $livre) { ?>
+                    <option value="<?php print $livre["id_genre"] ?>"><?php print $livre["nom_genre"] ?> </option>
+                <?php } ?>
+            </select>
 
-<div class="container mt-3">
+            <button name="btn_ajouter" type="submit">Ajouter</button>
 
-        <h2>Ajouter un utilisateur</h2>
-
-        <form action="" method="post">
-            
-            <input type="text" name="nom" placeholder="Nom" required>
-            <input type="text" name="prenom" placeholder="Prénom" required>
-            <input type="email" name="email" placeholder="Mail" required>
-
-            <button name="btn_ajouter_utilisateur" type="submit">Ajouter utilisateur</button>
-            
         </form>
-    </div>
-</form>
+
+    </section>
 
 
-</section>
+    <form method="POST">
+
+        <h2> Nouvelle Utilisateur </h2>
+
+        <input type="text" name="nom_utilisateur" placeholder="Nom" required />
+        <input type="text" name="prenom_utilisateur" placeholder="Prénom" required />
+        <input type="mail" name="mail_utilisateur" placeholder="Mail" required />
+        <input type="text" pattern="^0[1-9] \d{2} \d{2} \d{2} \d{2}$" name="tel_utilisateur" placeholder="Téléphone" required />
+
+        <button name="btn_add_user" type="submit">Ajouter</button>
+
+        <div id="messageDiv">
+            <?php echo isset($message) ? $message : ''; ?>
+        </div>
+
+    </form>
+
+
+
+
+
     <div class="container mt-3 ">
 
 
@@ -211,110 +232,110 @@ if ($_POST && isset($_POST['btn_ajouter_utilisateur'])) {
 
         <section>
 
-<article>
+            <article>
 
 
-            <form method="POST" action="emprunt.php">
-                <select name="utilisateur">
-                    <?php foreach ($liste_utilisateur as $utilisateur) { ?>
-                        <option value="<?php print $utilisateur["id_utilisateur"] ?>"><?php print $utilisateur["nom_utilisateur"];
-                                                                                        print " ";
-                                                                                        print $utilisateur["prenom_utilisateur"] ?> </option>
-                    <?php } ?>
-                </select>
+                <form method="POST" action="emprunt.php">
+                    <select name="utilisateur">
+                        <?php foreach ($liste_utilisateur as $utilisateur) { ?>
+                            <option value="<?php print $utilisateur["id_utilisateur"] ?>"><?php print $utilisateur["nom_utilisateur"];
+                                                                                            print " ";
+                                                                                            print $utilisateur["prenom_utilisateur"] ?> </option>
+                        <?php } ?>
+                    </select>
 
-                <input type="text" list="choix_livre_emprunt" name="liste_livre_emprunt">
-                <datalist id="choix_livre_emprunt">
-                    <?php foreach ($id_livre as $book) {
-                        if ($book['disponibilite_id'] == 0) { ?>
-                            <option value="<?php print $book['titre_livre'] ?>"><?php print $book['titre_livre'] ?></option>
+                    <input type="text" list="choix_livre_emprunt" name="liste_livre_emprunt">
+                    <datalist id="choix_livre_emprunt">
+                        <?php foreach ($id_livre as $book) {
+                            if ($book['disponibilite_id'] == 0) { ?>
+                                <option value="<?php print $book['titre_livre'] ?>"><?php print $book['titre_livre'] ?></option>
 
-                    <?php  }
-                    } ?>
+                        <?php  }
+                        } ?>
 
-                </datalist>
-                <button type="submit" id="btn_emprunt" name="btn_emprunt">Valider l'emprunt</button>
+                    </datalist>
+                    <button type="submit" id="btn_emprunt" name="btn_emprunt">Valider l'emprunt</button>
 
-            </form>
+                </form>
 
 
             </article>
             <article>
 
-         
-
-            <form method="POST" action="rendu.php">
-                <select name="utilisateur">
-                    <?php foreach ($liste_utilisateur as $utilisateur) { ?>
-                        <option value="<?php print $utilisateur["id_utilisateur"] ?>"><?php print $utilisateur["nom_utilisateur"];
-                                                                                        print " ";
-                                                                                        print $utilisateur["prenom_utilisateur"] ?> </option>
-                    <?php } ?>
-                </select>
 
 
+                <form method="POST" action="rendu.php">
+                    <select name="utilisateur">
+                        <?php foreach ($liste_utilisateur as $utilisateur) { ?>
+                            <option value="<?php print $utilisateur["id_utilisateur"] ?>"><?php print $utilisateur["nom_utilisateur"];
+                                                                                            print " ";
+                                                                                            print $utilisateur["prenom_utilisateur"] ?> </option>
+                        <?php } ?>
+                    </select>
 
-                <input type="text" list="choix_livre_rendu" name="liste_livre_rendu">
-                <datalist id="choix_livre_rendu">
-                    <?php foreach ($id_livre as $book) {
-                        if ($book['disponibilite_id'] == 1) { ?>
-                            <option value="<?php print $book['titre_livre'] ?>"><?php print $book['titre_livre'] ?></option>
 
-                    <?php  } else {
-                        }
-                    } ?>
 
-                </datalist>
-                <button type="submit" id="btn_rendu" name="btn_rendu">Valider le retour</button>
+                    <input type="text" list="choix_livre_rendu" name="liste_livre_rendu">
+                    <datalist id="choix_livre_rendu">
+                        <?php foreach ($id_livre as $book) {
+                            if ($book['disponibilite_id'] == 1) { ?>
+                                <option value="<?php print $book['titre_livre'] ?>"><?php print $book['titre_livre'] ?></option>
 
-            </form>
+                        <?php  } else {
+                            }
+                        } ?>
+
+                    </datalist>
+                    <button type="submit" id="btn_rendu" name="btn_rendu">Valider le retour</button>
+
+                </form>
 
             </article>
         </section>
 
 
-    
 
-</div>
-      
-      <!-- Footer -->
-       <footer class="navbar navbar-expand-lg bg-dark text-white mt-5 ">
-           <div class="container-fluid d-flex justify-content-center ">
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="navbar navbar-expand-lg bg-dark text-white mt-5 ">
+        <div class="container-fluid d-flex justify-content-center ">
             <span class="navbar-brand text-white fs-6 text"> MyBiblio - 2023 </span>
-            </div>
-        </footer>
+        </div>
+    </footer>
 
 
-        <script src="./script/script.js"></script>
-        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-        <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./script/script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-        <script>
-            $(document).ready(function() {
-                $('#example').DataTable({
-                    language: {
-                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json',
-                    }
-                });
-                var theHREF;
-
-                $(".confirmModalLink").click(function(e) {
-                    e.preventDefault();
-                    theHREF = $(this).attr("href");
-                    $("#confirmModal").modal("show");
-                });
-
-                $("#confirmModalNo").click(function(e) {
-                    $("#confirmModal").modal("hide");
-                });
-
-                $("#confirmModalYes").click(function(e) {
-                    window.location.href = theHREF;
-                });
+    <script>
+        $(document).ready(function() {
+            $('#example').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json',
+                }
             });
-        </script>
-        <?php $dao->disconnect(); ?>
+            var theHREF;
+
+            $(".confirmModalLink").click(function(e) {
+                e.preventDefault();
+                theHREF = $(this).attr("href");
+                $("#confirmModal").modal("show");
+            });
+
+            $("#confirmModalNo").click(function(e) {
+                $("#confirmModal").modal("hide");
+            });
+
+            $("#confirmModalYes").click(function(e) {
+                window.location.href = theHREF;
+            });
+        });
+    </script>
+    <?php $dao->disconnect(); ?>
 
 
 </body>
