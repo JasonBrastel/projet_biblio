@@ -333,7 +333,13 @@ class DAO
 //JASON
 	/* méthode qui renvoit tous les résultats sous forme de tableau*/
 	public function getLivre() {
-		$sql="SELECT image, titre_livre, isbn, nom_genre ,id_livre,shortDescription FROM livres INNER JOIN livres_genres ON livres.id_livre = livres_genres.livre_id INNER JOIN genres ON livres_genres.genre_id = genres.id_genre";
+		$sql="SELECT livres.image, livres.titre_livre, livres.isbn, genres.nom_genre, livres.id_livre, livres.shortDescription, auteurs.nom_auteur
+        FROM livres
+        INNER JOIN livres_genres ON livres.id_livre = livres_genres.livre_id
+        INNER JOIN genres ON livres_genres.genre_id = genres.id_genre
+        
+        INNER JOIN livre_auteur ON livres.id_livre = livre_auteur.id_livre
+        INNER JOIN auteurs ON livres.auteur_id = auteurs.id_auteur;";
 		return $this->getResults($sql);
 	}
 	//Methode pour le bouton de suppression sur la page catalogue de livre
@@ -343,17 +349,27 @@ class DAO
 	}
 	//info utilisateur sur modal page_utilisateur
     public function getUtilisateurLivreEmprunte() {
-        $sql="SELECT nom_utilisateur, prenom_utilisateur,identifiant_utilisateur, utilisateurs.id_utilisateur,titre_livre,date_emprunt,date_retour FROM `utilisateurs` INNER JOIN livre_utilisateur ON utilisateurs.id_utilisateur= livre_utilisateur.id_utilisateur INNER JOIN livres ON livres.id_livre = livre_utilisateur.id_livre  ORDER BY nom_utilisateur;";
+        $sql="SELECT nom_utilisateur, prenom_utilisateur,identifiant_utilisateur, utilisateurs.id_utilisateur,titre_livre,date_emprunt,date_retour 
+        FROM `utilisateurs` 
+        INNER JOIN livre_utilisateur ON utilisateurs.id_utilisateur= livre_utilisateur.id_utilisateur 
+        INNER JOIN livres ON livres.id_livre = livre_utilisateur.id_livre  
+        ORDER BY nom_utilisateur;";
         return $this->getResults($sql);
     }
     // info utilisateur sur modal Sur index
     public function getLivreEmprunteParUser() {
-        $sql="SELECT nom_utilisateur, prenom_utilisateur,identifiant_utilisateur, utilisateurs.id_utilisateur,titre_livre,livres.id_livre FROM `utilisateurs` INNER JOIN livre_utilisateur ON utilisateurs.id_utilisateur= livre_utilisateur.id_utilisateur INNER JOIN livres ON livres.id_livre = livre_utilisateur.id_livre ORDER BY nom_utilisateur;";
+        $sql="SELECT nom_utilisateur, prenom_utilisateur,identifiant_utilisateur, utilisateurs.id_utilisateur,titre_livre,livres.id_livre 
+        FROM `utilisateurs` 
+        INNER JOIN livre_utilisateur ON utilisateurs.id_utilisateur= livre_utilisateur.id_utilisateur 
+        INNER JOIN livres ON livres.id_livre = livre_utilisateur.id_livre 
+        ORDER BY nom_utilisateur;";
         return $this->getResults($sql);
     }
     function getUtilisateur(){
 
-        $sql= "SELECT nom_utilisateur, prenom_utilisateur,identifiant_utilisateur,type_utilisateur,id_utilisateur FROM utilisateurs WHERE type_utilisateur !=1";
+        $sql= "SELECT nom_utilisateur, prenom_utilisateur,identifiant_utilisateur,type_utilisateur,id_utilisateur 
+        FROM utilisateurs 
+        WHERE type_utilisateur !=1";
         return $this->getResultat($sql);
 
     }

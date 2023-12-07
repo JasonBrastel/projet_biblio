@@ -113,7 +113,8 @@ $selectAuteur = $dao-> getAuteurDatalist();
                     <th>Image</th>
                     <th>Titre</th>
                     <th>ISBN</th>
-                    <th>Résumé</th>
+                    <th>Genre</th>
+                    <th>Auteur</th>
                     <th>Bouton</th>
                     <th>Disponibilité</th>
                 </tr>
@@ -126,6 +127,7 @@ $selectAuteur = $dao-> getAuteurDatalist();
                         <td class="dispo-col"><?php echo $livre['titre_livre']; ?></td>
                         <td class="dispo-col"><?php echo $livre['isbn']; ?></td>
                         <td class="dispo-col"><?php echo $livre['nom_genre']; ?></td>
+                        <td class="dispo-col"><?php echo $livre['nom_auteur']; ?></td>
 
                         <td class="dispo-col">
                             <!-- Bouton détails -->
