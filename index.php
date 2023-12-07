@@ -1,304 +1,215 @@
 <?php
 session_start();
-require_once("dao.php");
+                                                   
+require_once("dao.php");                                             //on fait la jonction avec le fichier DAO
+$dao = new DAO();                                                         //on crée une nouvelle instance de DAO
+$dao->connexion();                                                        //on se connecte à la BDD
 
-$dao = new DAO();
-$dao->connexion();
-$livres = $dao->getLivre();
-$userLivreEmprunte = $dao->getLivreEmprunteParUser();
+$IdentifiantsErr="";                                                      //on crée une variable pour stocker les messages d'erreur si les identifiants sont incorrects
+$IdentifiantsInexistant="";                                               //on crée une variable pour stocker les messages d'erreur si les identifiants n'existent pas
 
-// Récupère les statuts de disponibilité des livres
-$dispoStatus = $dao->statusDispo();
-
-$id_livre = $dao->get_livre();
-$liste_utilisateur = $dao->getUtilisateur();
-
-if ($_POST) {
-    $dao->ajoutLivre();
-    $dao->getAuteursbyName($_POST['nom_auteur']);
-    $dao->getGenreByName($_POST['genre']);
-    
-    $dao->getIsbn($_POST['isbn']);
-   
-
+function valid_donnees($donnees)
+{                                         //on crée une fonction pour sécuriser les données du formulaire                        
+    $donnees = htmlentities(stripslashes(trim($donnees)));                //on enlève les espaces, les antislashs et les caractères spéciaux
+    return $donnees;                                                       //on retourne les données sécurisées                                           
 }
-$selectGenre = $dao-> getGenre();
-$selectAuteur = $dao-> getAuteurDatalist();
+
+if (isset($_POST['button_register']) && (($_SERVER['REQUEST_METHOD'] === 'POST'))) {   //si on clique sur le bouton "se connecter" et que la méthode utilisée est POST                          
+    $email = valid_donnees($_POST['email']);                              //on sécurise les données du formulaire
+    $pass = valid_donnees($_POST['pass']);                                //on sécurise les données du formulaire
+
+    $result = $dao->checkMail(valid_donnees($_POST['email']));          //on stocke le résultat de la fonction checkMail dans une variable
+
+    if ($result > 0) {                                                  //si l'email existe dans la BDD c'est-à-dire si le résultat de la fonction checkMail est supérieur à 0
+        if ($email == $result['mail_utilisateur'] && password_verify($pass, $result['mdp_utilisateur'])) {
+            if ($result['type_utilisateur'] != 1) {                    //si l'utilisateur n'a pas les droits nécessaires pour se connecter
+                $IdentifiantsErr = "<div class='text-center'>Vous n'avez pas les droits nécessaires pour vous connecter.<br>Veuillez contacter l'administrateur.</div>";
+            } else {
+                // Continuer le processus de connexion car l'utilisateur a les droits nécessaires
+                $_SESSION['email'] = $email;                         //on stocke l'email dans une variable de session   
+                header('location: page_livre.php');                       //on redirige l'utilisateur vers la page d'accueil
+            }
+        } else {
+            $IdentifiantsErr = "Vos identifiants sont incorrects. Veuillez réessayer.";
+        }
+    } else {
+        $IdentifiantsInexistant = "Cet email n'existe pas. Veuillez vous inscrire.";
+    }
+}
 
 
 ?>
 
+<script>
+    //fonction pour montrer les mots de passe:
+    function filtreMdp() {
+
+        let pass1 = document.getElementById("pass");
+
+        if (pass1.type === "password") { //si le type du mot de passe est "password" (donc caché), 
+            pass1.type = "text"; //on le change en "text" (donc visible)                 
+        } else {
+            pass1.type = "password";
+        } //sinon, on le change en "password" (donc caché)
+
+    }
+</script>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liste des livres</title>
-
+    <title>Connexion</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="style/style.css">
-</head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,200" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital@1&display=swap" rel="stylesheet">
 
+    <style>
+        .boutonInsc {
+            background: #DDD6C4;
+        }
+
+        .boutonInsc:hover {
+            background: #BF9C72;
+        }
+
+        body {
+        background-image: url('images/FondPageInscription.jpg');
+        background-size: cover;
+        }
+    </style>
+</head>
 
 <body>
 
+    <section>
 
     <nav class="navbar navbar-expand-lg bg-dark mb-5">
-        <div class="container-fluid">
-            <a class="navbar-brand text-white" href="">MyBiblio</a>
-
-            <div class="collapse navbar-collapse " id="navbarSupportedContent">
-
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <div class="container-fluid">
+                <a class="navbar-brand text-white" href="LoginPage.php">MyBiblio</a>
+               
+                <div class="collapse navbar-collapse " id="navbarSupportedContent">
+                
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <?php if (isset($_SESSION['email']) == true) { ?>
                         <li class="nav-item">
                             <a class="nav-link active text-white" aria-current="page" href="page_utilisateur.php">Membres</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-secondary" href="index.php">Livres</a>
+                            <a class="nav-link text-white" href="index.php">Livres</a>
                         </li>
                     <?php } ?>
-                </ul>
+                    </ul>
+                
+                    <?php if (isset($_SESSION['email']) == false) { ?>
+                   <a style="color:white;" href="inscription.php">Inscription</a>
+                   <?php }else{ ?>
+                    <a style="color:red;" class="d-flex justify-content-center " title="Cliquez ici pour vous déconnecter"href='deco.php'>Déconnexion</a>
 
-                <?php if (isset($_SESSION['email']) == false) { ?>
-                    <a style="color:white;" href="inscription.php">Inscription</a>
-                <?php } else { ?>
-                    <a style="color:red;" class="d-flex justify-content-center " title="Cliquez ici pour vous déconnecter" href='deco.php'>Déconnexion</a>
-
-                <?php } ?>
-            </div>
-        </div>
-    </nav>
-
-    <section class="container mt-5">
-    <h1 class="text-center mb-4">Ajout de livres :</h1>
-    <form method="POST">
-        <div class="row mb-3">
-            <div class="col-md-3">
-                <input type="text" name="titre_livre" class="form-control" placeholder="Titre du livre" required />
-            </div>
-            <div class="col-md-3">
-                <input type="text" name="isbn" class="form-control" placeholder="ISBN" required />
-            </div>
-            <div class="col-md-3">
-                <input type="text" list="choix_auteur" name="nom_auteur" class="form-control" placeholder="Nom de l'auteur" required />
-                <datalist id="choix_auteur">
-                    <?php foreach ($selectAuteur as $row) { ?>
-                        <option value="<?php print $row['nom_auteur']; ?>"><?php print $row['nom_auteur']; ?></option>
                     <?php } ?>
-                </datalist>
+                </div>
             </div>
-            <div class="col-md-3">
-                <input type="date" name="date_parution" class="form-control" required />
-            </div>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-md-3">
-                <input type="text" name="nombrePage" class="form-control" placeholder="Nombre de pages" required />
-            </div>
-            <div class="col-md-3">
-                <input type="text" name="long_description" class="form-control" placeholder="Description longue" />
-            </div>
-            <div class="col-md-3">
-                <input type="text" name="short_description" class="form-control" placeholder="Description courte" />
-            </div>
-            <div class="col-md-3">
-                <select name="genre" class="form-control">
-                    <?php foreach ($selectGenre as $livre) { ?>
-                        <option value="<?php print $livre["id_genre"] ?>"><?php print $livre["nom_genre"] ?> </option>
-                    <?php } ?>
-                </select>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-12 text-center mt-2">
-                <button class="btn btn-dark " name="btn_ajouter" type="submit" >Ajouter</button>
-            </div>
-        </div>
-
-    </form>
-</section>
-</section>
-    <div class="container mt-3 ">
+        </nav>
 
 
-        <table id="example" class="table ">
-            <thead>
-                <tr>
-                    <th>Image</th>
-                    <th>Titre</th>
-                    <th>ISBN</th>
-                    <th>Genre</th>
-                    <th>Auteur</th>
-                    <th>Bouton</th>
-                    <th>Disponibilité</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($livres as $livre) { ?>
+        <div class="mask d-flex align-items-center h-100 gradient-custom-3">
 
-                    <tr id="<?php print $livre['id_livre'] ?>">
-                        <td><img src="<?php echo $livre['image']; ?>" alt="Image du livre"></td>
-                        <td class="dispo-col"><?php echo $livre['titre_livre']; ?></td>
-                        <td class="dispo-col"><?php echo $livre['isbn']; ?></td>
-                        <td class="dispo-col"><?php echo $livre['nom_genre']; ?></td>
-                        <td class="dispo-col"><?php echo $livre['nom_auteur']; ?></td>
+            <div class="container">
 
-                        <td class="dispo-col">
-                            <!-- Bouton détails -->
-                            <button class="btn btn-secondary details-btn " data-bs-toggle="modal" data-bs-target="#livreModal<?php echo $livre['id_livre']; ?>">Voir détails</button>
-                            <!-- Bouton supprimer -->
-                            <form method="POST" action="suppr.php">
-                                <button id="btn_suppr" type="submit" name="btn_suppr" value="<?php echo $livre['id_livre']; ?>" class="btn btn-dark details-btn" data-bs-toggle="modal" data-bs-target="#confirmModal">Supprimer</button>
-                            </form>
-                        </td>
+                <div class="row d-flex justify-content-center align-items-center h-100">
 
-                        <td class="<?php echo $dispoStatus[$livre['id_livre']] == 0 ? 'dispo' : 'non-dispo'; ?> dispo-col">
-                   <span class="<?php echo $dispoStatus[$livre['id_livre']] == 0 ? 'text-success fw-bold' : 'text-danger fw-bold'; ?>">
-                            <?php echo $dispoStatus[$livre['id_livre']] == 0 ? 'Disponible' : 'Pas disponible'; ?>
-                   </span>
-  </td>
+                    <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                        <div class="card shadow-lg p-3 mb-5 bg-body rounded" style="border-radius: 15px;">
+
+                            <div class="card-body p-5">
+
+                                <h2 style="font-family: 'Poppins', sans-serif; " class="text-uppercase text-center mb-5 fw-bolder">Connexion</h2>
+
+                               
+
+                                <form method="POST">
+
+                                    
+
+                                    <div class="col-auto mb-5">
+                                        <div class="input-group">
+                                            <div style="border: none;" class="input-group-text"><span class="material-symbols-outlined">mail</span></div>
+                                            <input style="border: none;" type="email" class="form-control" id="email" name="email" title="Veuillez indiquer votre adresse mail" placeholder="Adresse mail..." required>
+                                        </div>
+
+                                    </div>
 
 
-                    </tr>
 
-                    <!-- Modal -->
-                    <div class="modal fade" id="livreModal<?php echo $livre['id_livre']; ?>" tabindex="-1" aria-labelledby="livreModalLabel<?php echo $livre['id_livre']; ?>">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title" id="livreModalLabel<?php echo $livre['id_livre']; ?>"><?php echo $livre['titre_livre']; ?></h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <img src="<?php echo $livre['image']; ?>" alt="Image du livre">
-                                    <p>ISBN: <?php echo $livre['isbn']; ?></p>
-                                    <p>Description: <?php echo $livre['shortDescription']; ?></p>
-                                
+                                    <div class="col-auto mb-5">
+                                        <div class="input-group">
+                                            <div style="border: none;" class="input-group-text"><span class="material-symbols-outlined">lock</span></div>
+                                            <input style="border: none;" type="password" class="form-control" id="pass" name="pass" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Votre mot de passe doit contenir au moins un chiffre, une majuscule, une minuscule et au moins 6 caractères" placeholder="Mot de passe..." required>
+                                        </div>
+                                        <input type="checkbox" class="mt-5 ms-3" onclick="filtreMdp()"> Afficher le mot de passe
+                                        
+                                    </div>
 
-                                <?php $aucunLivreEmprunte = true; ?>
-                                
-                                <?php foreach ($userLivreEmprunte as $LivreEmprunte) { ?> 
-                                   
-                                    <?php if ($LivreEmprunte['id_livre'] == $livre['id_livre']) { ?>
-                                        <p>Livre emprunté par : <?php echo $LivreEmprunte['nom_utilisateur']. ' ' .$LivreEmprunte['prenom_utilisateur']; ?></p>
+                                    <div style="color:red;" class="d-flex justify-content-center" id="messIdentInex">
+                                        <?php
+                                        if ($IdentifiantsInexistant) {
+                                            print $IdentifiantsInexistant;
+                                        }
+                                        ?>
+                                    </div>
+                                    <div style="color:red;" class="d-flex justify-content-center" id="messIdentError">
+                                        <?php
+                                        if ($IdentifiantsErr) {
+                                            print $IdentifiantsErr;
+                                        }
+                                        ?>
+                                    </div>
+
+                                    <?php if (isset($_SESSION['email']) == true) { ?>  <!-- si l'utilisateur est connecté, on affiche le bouton de déconnexion -->
+                                     <p style="color:green;" class="d-flex justify-content-center ">✔ Connexion établie, bienvenue <?php echo $_SESSION['email']  ?> !</p>
                                        
                                     <?php } ?>
-                                <?php } ?>
-                                
-                                <?php $aucunLivreEmprunte = false; ?>
-                                <?php if ($aucunLivreEmprunte) { ?> 
-                                     <p>Aucun livre emprunté</p>
-                                   
-                                <?php } ?>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                                </div>
+
+                                    <!-- bouton pour s'inscrire: -->
+                                    <?php if (isset($_SESSION['email']) == false) { ?>
+                                    <div class=" d-flex justify-content-center mt-4">
+                                        <button type="submit" name="button_register" class="boutonInsc btn btn btn-lg gradient-custom-4 text-body  ">Se connecter</button>
+                                    </div>
+                                    <?php } ?>
+
+                                    <?php if (isset($_SESSION['email']) == false) { ?>
+                                    <p class="text-center text-muted mt-4 mb-0">Vous n'avez pas de compte ? <a href="inscription.php" class="fw-bold text-body"><u>S'enregistrer</u></a></p>    
+                                    <div class="Mdp-oublie">
+                                        <a class="d-flex justify-content-center text-muted mt-4 mb-0 fw-2 text-body" href="MdpForgot.php">Mot de passe oublié ? </a>
+                                    </div>
+                                    <?php } ?>
+
+                                </form>
+
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <?php } ?>
-            </tbody>
-        </table>
-
-  
-
-</div>
-
-<section class="container mt-5">
-    <div class="row">
-        <article class="col-md-6">
-            <form method="POST" action="emprunt.php" class="d-flex justify-content-center align-items-center flex-column">
-                <select name="utilisateur" class="form-select mb-3">
-
-                    <?php foreach ($liste_utilisateur as $utilisateur) { ?>
-                        <option value="<?php print $utilisateur["id_utilisateur"] ?>"><?php print $utilisateur["nom_utilisateur"];
-                                                                                        print " ";
-                                                                                        print $utilisateur["prenom_utilisateur"] ?> </option>
-                    <?php } ?>
-                </select>
-
-
-
-                <input type="text" list="choix_livre_emprunt" name="liste_livre_emprunt" class="form-control mb-3" placeholder="Titre du livre">
-
-
-                <datalist id="choix_livre_emprunt">
-                    <?php foreach ($id_livre as $book) {
-                        if ($book['disponibilite_id'] == 0) { ?>
-                            <option value="<?php print $book['titre_livre'] ?>"><?php print $book['titre_livre'] ?></option>
-
-                    <?php  }
-                    } ?>
-                </datalist>
-
-                <button type="submit" id="btn_emprunt" name="btn_emprunt" class="btn btn-dark">Valider l'emprunt</button>
-            </form>
-        </article>
-
-        <article class="col-md-6">
-            <form method="POST" action="rendu.php" class="d-flex justify-content-center align-items-center flex-column">
-                <select name="utilisateur" class="form-select mb-3">
-
-                    <?php foreach ($liste_utilisateur as $utilisateur) { ?>
-                        <option value="<?php print $utilisateur["id_utilisateur"] ?>"><?php print $utilisateur["nom_utilisateur"];
-                                                                                        print " ";
-                                                                                        print $utilisateur["prenom_utilisateur"] ?> </option>
-                    <?php } ?>
-                </select>
-
-
-                <input type="text" list="choix_livre_rendu" name="liste_livre_rendu" class="form-control mb-3" placeholder="Titre du livre" required>
-
-
-                <datalist id="choix_livre_rendu">
-                    <?php foreach ($id_livre as $book) {
-                        if ($book['disponibilite_id'] == 1) { ?>
-                            <option value="<?php print $book['titre_livre'] ?>"><?php print $book['titre_livre'] ?></option>
-                    <?php  }
-
-                    } ?>
-                </datalist>
-
-                <button type="submit" id="btn_rendu" name="btn_rendu" class="btn btn-dark">Valider le retour</button>
-            </form>
-        </article>
-    </div>
-</section>
-      
-      <!-- Footer -->
-       <footer class="navbar navbar-expand-lg bg-dark text-white mt-5 ">
-           <div class="container-fluid d-flex justify-content-center ">
-            <span class="navbar-brand text-white fs-6 text"> MyBiblio - 2023 </span>
             </div>
-        </footer>
+        </div>
+    </section>
+
+     <!-- Footer -->
+<footer class="navbar navbar-expand-lg bg-dark text-white mt-5 ">
+    <div class="container-fluid d-flex justify-content-center ">
+        <span class="navbar-brand text-white fs-6 text"> MyBiblio - 2023  </span>
+    </div>
+</footer>
 
 
-        <script src="./script/script.js"></script>
-        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-        <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-        <script>
-            $(document).ready(function() {
-                $('#example').DataTable({
-                    language: {
-                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json',
-                    }
-                });
-            });
-        </script>
-        <?php $dao->disconnect(); ?>
+
 
 
 </body>
-
 
 </html>

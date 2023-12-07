@@ -1,5 +1,8 @@
 <?php
-session_start();
+session_start();                                              //on démarre la session pour pouvoir utiliser les variables de session
+if (! isset($_SESSION['email'])) {                            //si la variable de session n'existe pas c'est-à-dire si l'utilisateur n'est pas connecté
+    header('Location: index.php');                        //on redirige vers la page de connexion
+}
 
 require_once("dao.php");
 $dao = new DAO();
@@ -57,7 +60,7 @@ if ($_POST) {
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="index.php">Livres</a>
+                            <a class="nav-link text-white" href="page_livre.php">Livres</a>
                         </li>
                     <?php } ?>
                 </ul>
@@ -82,7 +85,8 @@ if ($_POST) {
 <input type="text" name="nom_utilisateur" placeholder="Nom" required />
 <input type="text" name="prenom_utilisateur" placeholder="Prénom" required />
 <input type="mail" name="mail_utilisateur" placeholder="Mail" required />
-<input type="text" name="tel_utilisateur" placeholder="Téléphone" required />
+<input type="text" pattern="^0[1-9] \d{2} \d{2} \d{2} \d{2}$" name="tel_utilisateur" placeholder="00 00 00 00 00" required />
+
 
 <button name="btn_add_user" type="submit">Ajouter</button>
 
@@ -114,7 +118,7 @@ if ($_POST) {
                             Fiche personnelle
                         </button>
                     </td>
-                    <form method="POST" action="suppr.php">
+                    <form method="POST" action="suppr_user.php">
                         <td>
                             <button <?php echo $user['id_utilisateur']; ?> class="btn btn-dark" data-toggle="modal" data-target="#confirmModal">Supprimer</button>
                         </td>
@@ -179,5 +183,5 @@ if ($_POST) {
         });
     </script>
 </body>
-
+<?php $dao->disconnect();  ?>
 </html>

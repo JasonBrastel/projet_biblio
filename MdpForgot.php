@@ -109,7 +109,7 @@ if ($result > 0)  {                                                             
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="index.php"></a>
+                            <a class="nav-link text-white" href="page_livre.php"></a>
                         </li>
                     </ul>
 
