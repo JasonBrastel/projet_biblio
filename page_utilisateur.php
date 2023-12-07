@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 require_once("dao.php");
 $dao = new DAO();
@@ -45,18 +46,18 @@ if ($_POST) {
 <body>
 <nav class="navbar navbar-expand-lg bg-dark mb-5">
         <div class="container-fluid">
-            <a class="navbar-brand text-white" href="LoginPage.php">MyBiblio</a>
+            <a class="navbar-brand text-white" href="">MyBiblio</a>
 
             <div class="collapse navbar-collapse " id="navbarSupportedContent">
 
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <?php if (isset($_SESSION['email']) == true) { ?>
                         <li class="nav-item">
-                            <a class="nav-link active text-white" aria-current="page" href="#">Membres</a>
+                            <a class="nav-link active text-secondary" aria-current="page" href="page_utilisateur.php">Membres</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-secondary" href="#">Livres</a>
+                            <a class="nav-link text-white" href="index.php">Livres</a>
                         </li>
                     <?php } ?>
                 </ul>
@@ -109,13 +110,13 @@ if ($_POST) {
                     <td><?php echo $user['prenom_utilisateur']; ?></td>
                     <td><?php echo $user['identifiant_utilisateur']; ?></td>
                     <td>
-                        <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#livreModal<?php echo $user['id_utilisateur']; ?>">
+                        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#livreModal<?php echo $user['id_utilisateur']; ?>">
                             Fiche personnelle
                         </button>
                     </td>
                     <form method="POST" action="suppr.php">
                         <td>
-                            <button <?php echo $user['id_utilisateur']; ?>" class="btn btn-danger" data-toggle="modal" data-target="#confirmModal">Supprimer</button>
+                            <button <?php echo $user['id_utilisateur']; ?> class="btn btn-dark" data-toggle="modal" data-target="#confirmModal">Supprimer</button>
                         </td>
                     </form>
                 </tr>

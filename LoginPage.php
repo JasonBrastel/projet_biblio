@@ -100,7 +100,7 @@ if (isset($_POST['button_register']) && (($_SERVER['REQUEST_METHOD'] === 'POST')
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <?php if (isset($_SESSION['email']) == true) { ?>
                         <li class="nav-item">
-                            <a class="nav-link active text-white" aria-current="page" href="#">Membres</a>
+                            <a class="nav-link active text-white" aria-current="page" href="page_utilisateur.php">Membres</a>
                         </li>
 
                         <li class="nav-item">

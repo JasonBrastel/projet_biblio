@@ -47,18 +47,18 @@ $selectAuteur = $dao-> getAuteurDatalist();
 
     <nav class="navbar navbar-expand-lg bg-dark mb-5">
         <div class="container-fluid">
-            <a class="navbar-brand text-white" href="LoginPage.php">MyBiblio</a>
+            <a class="navbar-brand text-white" href="">MyBiblio</a>
 
             <div class="collapse navbar-collapse " id="navbarSupportedContent">
 
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <?php if (isset($_SESSION['email']) == true) { ?>
                         <li class="nav-item">
-                            <a class="nav-link active text-white" aria-current="page" href="#">Membres</a>
+                            <a class="nav-link active text-white" aria-current="page" href="page_utilisateur.php">Membres</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-secondary" href="#">Livres</a>
+                            <a class="nav-link text-secondary" href="index.php">Livres</a>
                         </li>
                     <?php } ?>
                 </ul>
@@ -73,7 +73,56 @@ $selectAuteur = $dao-> getAuteurDatalist();
         </div>
     </nav>
 
+    <section class="container mt-5">
+    <h1 class="text-center mb-4">Ajout de livres :</h1>
+    <form method="POST">
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <input type="text" name="titre_livre" class="form-control" placeholder="Titre du livre" required />
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="isbn" class="form-control" placeholder="ISBN" required />
+            </div>
+            <div class="col-md-3">
+                <input type="text" list="choix_auteur" name="nom_auteur" class="form-control" placeholder="Nom de l'auteur" required />
+                <datalist id="choix_auteur">
+                    <?php foreach ($selectAuteur as $row) { ?>
+                        <option value="<?php print $row['nom_auteur']; ?>"><?php print $row['nom_auteur']; ?></option>
+                    <?php } ?>
+                </datalist>
+            </div>
+            <div class="col-md-3">
+                <input type="date" name="date_parution" class="form-control" required />
+            </div>
+        </div>
 
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <input type="text" name="nombrePage" class="form-control" placeholder="Nombre de pages" required />
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="long_description" class="form-control" placeholder="Description longue" />
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="short_description" class="form-control" placeholder="Description courte" />
+            </div>
+            <div class="col-md-3">
+                <select name="genre" class="form-control">
+                    <?php foreach ($selectGenre as $livre) { ?>
+                        <option value="<?php print $livre["id_genre"] ?>"><?php print $livre["nom_genre"] ?> </option>
+                    <?php } ?>
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 text-center mt-2">
+                <button class="btn btn-dark " name="btn_ajouter" type="submit" >Ajouter</button>
+            </div>
+        </div>
+
+    </form>
+</section>
 </section>
     <div class="container mt-3 ">
 
@@ -159,13 +208,16 @@ $selectAuteur = $dao-> getAuteurDatalist();
             </tbody>
         </table>
 
-        <section>
+  
 
-<article>
+</div>
 
+<section class="container mt-5">
+    <div class="row">
+        <article class="col-md-6">
+            <form method="POST" action="emprunt.php" class="d-flex justify-content-center align-items-center flex-column">
+                <select name="utilisateur" class="form-select mb-3">
 
-            <form method="POST" action="emprunt.php">
-                <select name="utilisateur">
                     <?php foreach ($liste_utilisateur as $utilisateur) { ?>
                         <option value="<?php print $utilisateur["id_utilisateur"] ?>"><?php print $utilisateur["nom_utilisateur"];
                                                                                         print " ";
@@ -173,7 +225,11 @@ $selectAuteur = $dao-> getAuteurDatalist();
                     <?php } ?>
                 </select>
 
-                <input type="text" list="choix_livre_emprunt" name="liste_livre_emprunt">
+
+
+                <input type="text" list="choix_livre_emprunt" name="liste_livre_emprunt" class="form-control mb-3" placeholder="Titre du livre">
+
+
                 <datalist id="choix_livre_emprunt">
                     <?php foreach ($id_livre as $book) {
                         if ($book['disponibilite_id'] == 0) { ?>
@@ -181,20 +237,16 @@ $selectAuteur = $dao-> getAuteurDatalist();
 
                     <?php  }
                     } ?>
-
                 </datalist>
-                <button type="submit" id="btn_emprunt" name="btn_emprunt">Valider l'emprunt</button>
 
+                <button type="submit" id="btn_emprunt" name="btn_emprunt" class="btn btn-dark">Valider l'emprunt</button>
             </form>
+        </article>
 
+        <article class="col-md-6">
+            <form method="POST" action="rendu.php" class="d-flex justify-content-center align-items-center flex-column">
+                <select name="utilisateur" class="form-select mb-3">
 
-            </article>
-            <article>
-
-         
-
-            <form method="POST" action="rendu.php">
-                <select name="utilisateur">
                     <?php foreach ($liste_utilisateur as $utilisateur) { ?>
                         <option value="<?php print $utilisateur["id_utilisateur"] ?>"><?php print $utilisateur["nom_utilisateur"];
                                                                                         print " ";
@@ -203,26 +255,23 @@ $selectAuteur = $dao-> getAuteurDatalist();
                 </select>
 
 
+                <input type="text" list="choix_livre_rendu" name="liste_livre_rendu" class="form-control mb-3" placeholder="Titre du livre" required>
 
-                <input type="text" list="choix_livre_rendu" name="liste_livre_rendu">
+
                 <datalist id="choix_livre_rendu">
                     <?php foreach ($id_livre as $book) {
                         if ($book['disponibilite_id'] == 1) { ?>
                             <option value="<?php print $book['titre_livre'] ?>"><?php print $book['titre_livre'] ?></option>
+                    <?php  }
 
-                    <?php  } else {
-                        }
                     } ?>
-
                 </datalist>
-                <button type="submit" id="btn_rendu" name="btn_rendu">Valider le retour</button>
 
+                <button type="submit" id="btn_rendu" name="btn_rendu" class="btn btn-dark">Valider le retour</button>
             </form>
-
-            </article>
-        </section>
-
-</div>
+        </article>
+    </div>
+</section>
       
       <!-- Footer -->
        <footer class="navbar navbar-expand-lg bg-dark text-white mt-5 ">
