@@ -72,36 +72,7 @@ $selectAuteur = $dao-> getAuteurDatalist();
             </div>
         </div>
     </nav>
-<section>
 
-<form method="POST">
-
-<input type="text" name="titre_livre" placeholder="Titre du livre" required />
-<input type="text" name="isbn" placeholder="ISBN" required />
-<input type="text" list="choix_auteur" name="nom_auteur" placeholder="Nom de l'auteur" required/>
-
-        <datalist id ="choix_auteur">
-            <?php foreach ($selectAuteur as $row){?> 
-        <option value="<?php print $row['nom_auteur'];?>" ><?php print $row['nom_auteur'];?></option>
-        <?php } ?>
-        </datalist>
-  
-<input type="date" name="date_parution" name="trip-start" value="" required/>
-<input type="text" name="nombrePage" placeholder="Nombre de pages"required/>
-<input type="text" name="long_description" placeholder="Description longue" />
-<input type="text" name="short_description" placeholder="Description courte" />
-<input type="text" name="quantity" placeholder="Nombre de livre" />
-<select name="genre" >
-    <?php foreach ($selectGenre as $livre) {?>
-    <option value="<?php print $livre["id_genre"]?>"><?php print $livre["nom_genre"]?> </option>
-<?php } ?>
-</select>
-
-<button name="btn_ajouter" type="submit">Ajouter</button>
-
-</form>
-</body>
-<footer>
 
 </section>
     <div class="container mt-3 ">
@@ -131,16 +102,18 @@ $selectAuteur = $dao-> getAuteurDatalist();
 
                         <td class="dispo-col">
                             <!-- Bouton détails -->
-                            <button class="btn btn-info details-btn " data-bs-toggle="modal" data-bs-target="#livreModal<?php echo $livre['id_livre']; ?>">Voir détails</button>
+                            <button class="btn btn-secondary details-btn " data-bs-toggle="modal" data-bs-target="#livreModal<?php echo $livre['id_livre']; ?>">Voir détails</button>
                             <!-- Bouton supprimer -->
                             <form method="POST" action="suppr.php">
-                                <button id="btn_suppr" type="submit" name="btn_suppr" value="<?php echo $livre['id_livre']; ?>" class="btn btn-danger details-btn" data-bs-toggle="modal" data-bs-target="#confirmModal">Supprimer</button>
+                                <button id="btn_suppr" type="submit" name="btn_suppr" value="<?php echo $livre['id_livre']; ?>" class="btn btn-dark details-btn" data-bs-toggle="modal" data-bs-target="#confirmModal">Supprimer</button>
                             </form>
                         </td>
 
                         <td class="<?php echo $dispoStatus[$livre['id_livre']] == 0 ? 'dispo' : 'non-dispo'; ?> dispo-col">
+                   <span class="<?php echo $dispoStatus[$livre['id_livre']] == 0 ? 'text-success fw-bold' : 'text-danger fw-bold'; ?>">
                             <?php echo $dispoStatus[$livre['id_livre']] == 0 ? 'Disponible' : 'Pas disponible'; ?>
-                        </td>
+                   </span>
+  </td>
 
 
                     </tr>

@@ -66,8 +66,9 @@ class DAO
 	}
 
 
-    //CLEMENT
+    //--------------------------------------------------------------------------------------------CLEMENT -------------------------------------------------------------------------------------
     
+
     //FONCTION QUI RECUPERE LES RESULTATS DES REQUETES SQL
     public function getResultat($requete)
     {
@@ -84,7 +85,7 @@ class DAO
             return $declaration->fetchAll();
         }
     }
-
+    //FONCTION POUR RECUPERER UN SEUL ELEMENT DE LA REQUETE
     public function getAlone($requete, $param)
     {
 
@@ -110,7 +111,7 @@ class DAO
     }
 
 
-
+    //FONCTION POUR RECUPERER LES LIVRES
     function get_livre(){
 
         $sql="SELECT id_livre, titre_livre, disponibilite_id FROM `livres`";
@@ -118,13 +119,22 @@ class DAO
         
     }
 
-
+    //FONCTION POUR RECUPERER le titre du livre avec GETALONE pour la fonction emprunt
     function get_livre_emprunt($param = []){
 
         $sql="SELECT * FROM `livres` where titre_livre = :inputTitre";
         return $this->getAlone($sql, $param);
         
     }
+
+     //FONCTION POUR RECUPERER le titre du livre avec GETALONE pour la fonction rendu
+    function get_livre_rendu($param = []){
+
+        $sql="SELECT * FROM `livres` where titre_livre = :inputTitre";
+        return $this->getAlone($sql, $param);
+        
+    }
+
 
 
     //FONCTION POUR RECUPERER LES GENRES DE LIVRES
@@ -143,20 +153,33 @@ class DAO
 
     }
 
+    //FONCTION POUR RECUPERER LE NOMBRE DE LIVRES EN STOCK
+    function getStock($param= []){
+        
+    $sql="SELECT Nombre_livre FROM stock WHERE id_livre = :id_livre ";
+    return $this->getAlone($sql,$param);
+
+    }
 
 
-    function get_livre_utilisateur($name){
+    //FONCTION POUR RECUPERER L'ID DU LIVRE DANS LA TABLE LIVRE_UTILISATEUR
+    function get_livre_utilisateur(){
 
         $sql="SELECT id_livre FROM `livre_utilisateur`";
         return $this->getResultat($sql);
 
     }
+
+    //FONCTION POUR RECUPERER LA DISPO DU LIVRE QUI CORRESPOND AU LIVRE SOUHAITE
     function verif_dispo_livre($id_livre){
 
         $sql="SELECT disponibilite_id FROM livres WHERE id_livre LIKE  $id_livre";
         return $this->getResultat($sql);
 
     }
+
+    //FONCTION POUR TOUT RECUPERER DE LA TABLE UTILISATEUR
+    function getUtilisateur(){
 
 
 
@@ -289,17 +312,35 @@ class DAO
 
         if(isset($_POST['liste_livre_emprunt'])){
 
-           
-        
+            //AJout de la date d'emprunt et de la date de retour 15 jours apres 
+            $dateEmprunt= date("Y-m-d");
+            $dateRetour = date('Y-m-d', strtotime($dateEmprunt. ' + 15 days'));
             $idlivre = $param;
+            $id_util = $_POST['utilisateur'];
+
+            //INSERTION dans la table livre utilisateur
+            $sql1="INSERT INTO livre_utilisateur (`id_livre`,`id_utilisateur`, `date_emprunt`,`date_retour`) VALUES (?,?,?,?)";
+            $query = $this->bdd->prepare($sql1);
+            $query->execute([$idlivre, $id_util,$dateEmprunt,$dateRetour]);
+
+            //Récupération du nombre de livre, dans la table STOCK, par ID de livre
+            //SI le nombre de livres est différent de 0 
+            if($this->getStock(["id_livre" =>$param])['Nombre_livre'] != 0 ){
+
+            //Mise a jour de la table stock a l'endroit qui correspond a l'ID du livre
+            $sql2="UPDATE stock SET Nombre_livre = Nombre_livre-1 WHERE id_livre = $idlivre";
+            $this->bdd->query($sql2);
+            }
+            
+            //SI le nombre de livre est 0
+            if($this->getStock(["id_livre" =>$param])['Nombre_livre'] == 0 ){
+            //Mise a jour de la table livres, on change la disponibilité du livre en fonction de nombre de livres en stock
             $sql="UPDATE livres SET disponibilite_id = 1 WHERE id_livre = $idlivre";
             $this->bdd->query($sql);
-            $id_util = $_POST['utilisateur'];
-            $sql1="INSERT INTO livre_utilisateur (`id_livre`,`id_utilisateur`) VALUES (?,?)";
-            $query = $this->bdd->prepare($sql1);
-            $query->execute([$idlivre, $id_util]);
+                
 
-            
+                }
+
             }
                
         }
@@ -310,12 +351,19 @@ class DAO
             if(isset($_POST['liste_livre_rendu'])){
    
                 $idlivre = $param;
-                $sql="UPDATE livres SET disponibilite_id = 0 WHERE id_livre = $idlivre";
-                $this->bdd->query($sql);
                 $id_util = $_POST['utilisateur'];
 
+                //Supression de la ligne qui correspond a l'emprunt du livre dans la table livre_utilisateur
                 $sql1="DELETE FROM livre_utilisateur WHERE id_livre =  $idlivre AND id_utilisateur = $id_util";
                 $this->bdd->query($sql1);
+                //Mise a jour du stock lrs d'un emprunt de livre
+                $sql2="UPDATE stock SET Nombre_livre = Nombre_livre+1 WHERE id_livre = $idlivre";
+                $this->bdd->query($sql2);
+                //SI le stock est supérieur à 1 on modifie la disponibilité du livre
+                if($this->getStock(["id_livre" =>$param])['Nombre_livre']  >= 1 ){
+                $sql="UPDATE livres SET disponibilite_id = 0 WHERE id_livre = $idlivre";
+                $this->bdd->query($sql);
+
 
                 }
                    
@@ -330,8 +378,14 @@ class DAO
 
     }
 
+
+
+//-----------------------------------------------------------------------------------------------JASON-------------------------------------------------------------------------------------------
+	
+
 //JASON
 	/* méthode qui renvoit tous les résultats sous forme de tableau*/
+
 	public function getLivre() {
 		$sql="SELECT livres.image, livres.titre_livre, livres.isbn, genres.nom_genre, livres.id_livre, livres.shortDescription, auteurs.nom_auteur
         FROM livres
@@ -374,7 +428,10 @@ class DAO
 
     }
 
-//DAVID
+
+    //-----------------------------------------------------------------------------------------------------DAVID-------------------------------------------------------------------------------------
+
+
     //fonction pour ajouter des utilisateurs depuis le formulaire d'inscription:
         
     //mettre en paramètre les données stockées en POST    
