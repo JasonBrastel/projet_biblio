@@ -200,7 +200,7 @@ $selectAuteur = $dao-> getAuteurDatalist();
                     <?php } ?>
                 </select>
 
-                <input type="text" list="choix_livre_emprunt" name="liste_livre_emprunt">
+                <input type="text" list="choix_livre_emprunt" name="liste_livre_emprunt" required>
                 <datalist id="choix_livre_emprunt">
                     <?php foreach ($id_livre as $book) {
                         if ($book['disponibilite_id'] == 0) { ?>
@@ -231,7 +231,7 @@ $selectAuteur = $dao-> getAuteurDatalist();
 
 
 
-                <input type="text" list="choix_livre_rendu" name="liste_livre_rendu">
+                <input type="text" list="choix_livre_rendu" name="liste_livre_rendu" required>
                 <datalist id="choix_livre_rendu">
                     <?php foreach ($id_livre as $book) {
                         if ($book['disponibilite_id'] == 1) { ?>
