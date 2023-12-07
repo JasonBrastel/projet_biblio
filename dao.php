@@ -318,14 +318,18 @@ class DAO
             $query = $this->bdd->prepare($sql1);
             $query->execute([$idlivre, $id_util,$dateEmprunt,$dateRetour]);
 
+
+            if($this->getStock(["id_livre" =>$param])['Nombre_livre'] != 0 ){
             $sql2="UPDATE stock SET Nombre_livre = Nombre_livre-1 WHERE id_livre = $idlivre";
             $this->bdd->query($sql2);
+            }
  
             if($this->getStock(["id_livre" =>$param])['Nombre_livre'] == 0 ){
             $sql="UPDATE livres SET disponibilite_id = 1 WHERE id_livre = $idlivre";
             $this->bdd->query($sql);
-                }
+                
 
+                }
             }
                
         }
