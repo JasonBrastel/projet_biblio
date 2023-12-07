@@ -1,25 +1,8 @@
-<script>
-    //fonction pour montrer les mots de passe:
-    function filtreMdp() {
-
-        let pass1 = document.getElementById("pass"); //on crée une variable pour le premier mot de passe
-        let pass2 = document.getElementById("pass2"); //on crée une variable pour le deuxième mot de passe
-
-        if (pass1.type === "password" && pass2.type === "password") { //si les mots de passe sont cachés, on les affiche:
-            pass1.type = "text"; //on change le type de l'input pour afficher le mot de passe
-            pass2.type = "text";
-        } else {
-            pass1.type = "password"; //sinon, on les cache:                       
-            pass2.type = "password";
-        }
-    }
-</script>
-
 <?php
 session_start();                                                          //on démarre la session pour pouvoir utiliser les variables de session
 require_once("dao.php");
 if (isset($_SESSION['email']) == true) {
-    header('location: index.php');                                      
+    header('location: page_livre.php');                                      
 }                                       
 $dao = new DAO();                                                         //on crée une nouvelle instance de DAO
 $dao->connexion();                                                        //on se connecte à la BDD
@@ -84,7 +67,22 @@ if (isset($_POST['button_register']) && ($_SERVER['REQUEST_METHOD'] === 'POST'))
 }
 ?>
 
+<script>
+    //fonction pour montrer les mots de passe:
+    function filtreMdp() {
 
+        let pass1 = document.getElementById("pass"); //on crée une variable pour le premier mot de passe
+        let pass2 = document.getElementById("pass2"); //on crée une variable pour le deuxième mot de passe
+
+        if (pass1.type === "password" && pass2.type === "password") { //si les mots de passe sont cachés, on les affiche:
+            pass1.type = "text"; //on change le type de l'input pour afficher le mot de passe
+            pass2.type = "text";
+        } else {
+            pass1.type = "password"; //sinon, on les cache:                       
+            pass2.type = "password";
+        }
+    }
+</script>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -144,7 +142,7 @@ if (isset($_POST['button_register']) && ($_SERVER['REQUEST_METHOD'] === 'POST'))
                         </li>
                     </ul>
 
-                   <a style="color:white;" href="LoginPage.php">se connecter</a>
+                   <a style="color:white;" href="index.php">se connecter</a>
 
                 </div>
             </div>

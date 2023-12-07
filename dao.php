@@ -508,7 +508,9 @@ class DAO
 
 
 
- //PAUL 
+ //----------------------------------------------------------------------------------------PAUL-------------------------------------------------------------------------------------------------
+
+
    // fonction changment de status de la dispo dans datatable 
    
    public function statusDispo()
@@ -534,24 +536,47 @@ class DAO
 
     //fonction ajout d'utilisateur 
     public function ajoutUtilisateur($nom_utilisateur, $prenom_utilisateur, $mail_utilisateur, $tel_utilisateur)
-{
-    // Vérifie si l'e-mail existe déjà dans la base de données
-    $sql_check_email = "SELECT COUNT(*) FROM utilisateurs WHERE mail_utilisateur = ?";
-    $query_check_email = $this->bdd->prepare($sql_check_email);
-    $query_check_email->execute([$mail_utilisateur]);
-    $email_exists = $query_check_email->fetchColumn();
-
+    {
+        $identifiant_utilisateur = 0;
+        $message = ''; // Variable pour stocker le message
+    
+        // Vérifie si l'identifiant utilisateur existe déjà
+        $sql_check_identifiant = "SELECT COUNT(*) FROM utilisateurs WHERE identifiant_utilisateur = ?";
+        $query_check_identifiant = $this->bdd->prepare($sql_check_identifiant);
+    
+        do {
+            // Génère un nouvel identifiant utilisateur aléatoire entre 10000 et 999999999
+            $identifiant_utilisateur = mt_rand(10000, 99999999);
+    
+            // Vérifie si le nouvel identifiant existe déjà 
+            $query_check_identifiant->execute([$identifiant_utilisateur]);
+            $identifiant_exists = $query_check_identifiant->fetchColumn();
+    
+            // Si l'identifiant a été réaffecté, stocke le message
+            if ($identifiant_utilisateur != mt_rand(10000, 999999999)) {
+                $message = "Identifiant réaffecté";
+            }
+        } while ($identifiant_exists);
+    
+        // Vérifie si l'e-mail existe déjà dans la base de données
+        $sql_check_email = "SELECT COUNT(*) FROM utilisateurs WHERE mail_utilisateur = ?";
+        $query_check_email = $this->bdd->prepare($sql_check_email);
+        $query_check_email->execute([$mail_utilisateur]);
+        $email_exists = $query_check_email->fetchColumn();
+    
     if ($email_exists) {
-        // L'e-mail existe déjà, retourne un message d'erreur
-        return "L'utilisateur avec cet e-mail existe déjà.";
-    } else {
-        // L'e-mail n'existe pas, procède à l'insertion et retourne un message de succès
-        $sql_insert_user = "INSERT INTO utilisateurs (nom_utilisateur, prenom_utilisateur, mail_utilisateur, tel_utilisateur) VALUES (?, ?, ?, ?)";
-        $query_insert_user = $this->bdd->prepare($sql_insert_user);
-        $query_insert_user->execute([$nom_utilisateur, $prenom_utilisateur, $mail_utilisateur, $tel_utilisateur]);
-        return "Utilisateur ajouté avec succès!";
+            // L'e-mail existe déjà, retourne un message d'erreur
+            return "L'utilisateur avec cet e-mail existe déjà.";
+        } else {
+            // L'e-mail n'existe pas, procède à l'insertion
+            $sql_insert_user = "INSERT INTO utilisateurs (nom_utilisateur, prenom_utilisateur, mail_utilisateur, tel_utilisateur, identifiant_utilisateur) VALUES (?, ?, ?, ?, ?)";
+            $query_insert_user = $this->bdd->prepare($sql_insert_user);
+            $query_insert_user->execute([$nom_utilisateur, $prenom_utilisateur, $mail_utilisateur, $tel_utilisateur, $identifiant_utilisateur]);
+    
+            // Retourne le message (peut être vide s'il n'y a pas eu de réaffectation d'identifiant)
+            return $message . " Utilisateur ajouté avec succès!";
+        }
     }
-} 
 
 }
 
