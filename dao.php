@@ -179,7 +179,7 @@ class DAO
     }
 
     //FONCTION POUR TOUT RECUPERER DE LA TABLE UTILISATEUR
-    function getUtilisateur(){
+    // function getUtilisateur(){
 
 
 
@@ -368,7 +368,7 @@ class DAO
                 }
                    
             }
-
+        }
         
     function suppr_livre($idlivre){
 
@@ -379,7 +379,7 @@ class DAO
     }
 
 
-
+        
 //-----------------------------------------------------------------------------------------------JASON-------------------------------------------------------------------------------------------
 	
 
@@ -547,7 +547,7 @@ class DAO
     }
 } 
 
-
 }
+
 ?>
 
