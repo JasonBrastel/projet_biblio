@@ -24,3 +24,8 @@ h1 {
     font-family: 'Roboto Slab', serif;
 }
 
+table img{
+    height: 200px ;
+    width: 150px;
+}
+

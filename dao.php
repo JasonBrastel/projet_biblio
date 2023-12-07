@@ -126,14 +126,6 @@ class DAO
         
     }
 
-    
-    function get_livre_rendu($param = []){
-
-        $sql="SELECT * FROM `livres` where titre_livre = :inputTitre";
-        return $this->getAlone($sql, $param);
-        
-    }
-
 
     //FONCTION POUR RECUPERER LES GENRES DE LIVRES
     function getGenre(){
@@ -151,12 +143,6 @@ class DAO
 
     }
 
-    function getStock($param= []){
-        
-    $sql="SELECT Nombre_livre FROM stock WHERE id_livre = :id_livre ";
-    return $this->getAlone($sql,$param);
-
-    }
 
 
     function get_livre_utilisateur($name){
@@ -172,12 +158,7 @@ class DAO
 
     }
 
-    function getUtilisateur(){
 
-        $sql= "SELECT * FROM `utilisateurs`";
-        return $this->getResultat($sql);
-
-    }
 
 
     //FONCTION POUR RECUPERER LES NOMS DES AUTEURS 
@@ -302,58 +283,45 @@ class DAO
 
 
 
-    //FONCTION POUR EMPRUNTER UN LIVRE
+
     function emprunt_livre($param){
 
 
         if(isset($_POST['liste_livre_emprunt'])){
 
-    
-            $dateEmprunt= date("Y-m-d");
-            $dateRetour = date('Y-m-d', strtotime($dateEmprunt. ' + 15 days'));
+           
+        
             $idlivre = $param;
-            $id_util = $_POST['utilisateur'];
-
-            $sql1="INSERT INTO livre_utilisateur (`id_livre`,`id_utilisateur`, `date_emprunt`,`date_retour`) VALUES (?,?,?,?)";
-            $query = $this->bdd->prepare($sql1);
-            $query->execute([$idlivre, $id_util,$dateEmprunt,$dateRetour]);
-
-            $sql2="UPDATE stock SET Nombre_livre = Nombre_livre-1 WHERE id_livre = $idlivre";
-            $this->bdd->query($sql2);
- 
-            if($this->getStock(["id_livre" =>$param])['Nombre_livre'] == 0 ){
             $sql="UPDATE livres SET disponibilite_id = 1 WHERE id_livre = $idlivre";
             $this->bdd->query($sql);
-                }
+            $id_util = $_POST['utilisateur'];
+            $sql1="INSERT INTO livre_utilisateur (`id_livre`,`id_utilisateur`) VALUES (?,?)";
+            $query = $this->bdd->prepare($sql1);
+            $query->execute([$idlivre, $id_util]);
 
+            
             }
                
         }
     
-        //FONCTION QUAND UN LIVRE EST RENDU
         function rendu_livre($param){
 
 
             if(isset($_POST['liste_livre_rendu'])){
    
                 $idlivre = $param;
+                $sql="UPDATE livres SET disponibilite_id = 0 WHERE id_livre = $idlivre";
+                $this->bdd->query($sql);
                 $id_util = $_POST['utilisateur'];
 
                 $sql1="DELETE FROM livre_utilisateur WHERE id_livre =  $idlivre AND id_utilisateur = $id_util";
                 $this->bdd->query($sql1);
-                
-                $sql2="UPDATE stock SET Nombre_livre = Nombre_livre+1 WHERE id_livre = $idlivre";
-                $this->bdd->query($sql2);
-                
-                if($this->getStock(["id_livre" =>$param])['Nombre_livre']  >= 1 ){
-                $sql="UPDATE livres SET disponibilite_id = 0 WHERE id_livre = $idlivre";
-                $this->bdd->query($sql);
-
 
                 }
+                   
             }
-        }
-        // FONCTION POUR SUPPRIMER LE LIVRE DE LA BDD
+
+        
     function suppr_livre($idlivre){
 
         $sql="DELETE FROM livres WHERE id_livre LIKE $idlivre";
@@ -362,26 +330,35 @@ class DAO
 
     }
 
-
 //JASON
-	/* méthode qui renvoit tous les résultats sous forme de tableau
-	*/
-
+	/* méthode qui renvoit tous les résultats sous forme de tableau*/
 	public function getLivre() {
-		$sql="SELECT image, titre_livre, isbn, shortDescription,id_livre FROM livres;";
+		$sql="SELECT image, titre_livre, isbn, nom_genre ,id_livre,shortDescription FROM livres INNER JOIN livres_genres ON livres.id_livre = livres_genres.livre_id INNER JOIN genres ON livres_genres.genre_id = genres.id_genre";
 		return $this->getResults($sql);
 	}
-	
+	//Methode pour le bouton de suppression sur la page catalogue de livre
 	public function getDelete() {
 		$sql="SELECT image, titre_livre, isbn, shortDescription,id_livre FROM livres;";
 		return $this->getResults($sql);
 	}
-	
+	//info utilisateur sur modal page_utilisateur
+    public function getUtilisateurLivreEmprunte() {
+        $sql="SELECT nom_utilisateur, prenom_utilisateur,identifiant_utilisateur, utilisateurs.id_utilisateur,titre_livre,date_emprunt,date_retour FROM `utilisateurs` INNER JOIN livre_utilisateur ON utilisateurs.id_utilisateur= livre_utilisateur.id_utilisateur INNER JOIN livres ON livres.id_livre = livre_utilisateur.id_livre  ORDER BY nom_utilisateur;";
+        return $this->getResults($sql);
+    }
+    // info utilisateur sur modal Sur index
+    public function getLivreEmprunteParUser() {
+        $sql="SELECT nom_utilisateur, prenom_utilisateur,identifiant_utilisateur, utilisateurs.id_utilisateur,titre_livre,livres.id_livre FROM `utilisateurs` INNER JOIN livre_utilisateur ON utilisateurs.id_utilisateur= livre_utilisateur.id_utilisateur INNER JOIN livres ON livres.id_livre = livre_utilisateur.id_livre ORDER BY nom_utilisateur;";
+        return $this->getResults($sql);
+    }
+    function getUtilisateur(){
 
+        $sql= "SELECT nom_utilisateur, prenom_utilisateur,identifiant_utilisateur,type_utilisateur,id_utilisateur FROM utilisateurs WHERE type_utilisateur !=1";
+        return $this->getResultat($sql);
 
+    }
 
-
-    //DAVID
+//DAVID
     //fonction pour ajouter des utilisateurs depuis le formulaire d'inscription:
         
     //mettre en paramètre les données stockées en POST    
@@ -474,12 +451,30 @@ class DAO
 
     // Retourner le tableau des statuts de disponibilité
     return $statusArray;
-
 }
 
+    //fonction ajout d'utilisateur 
+    public function ajoutUtilisateur($nom_utilisateur, $prenom_utilisateur, $mail_utilisateur, $tel_utilisateur)
+{
+    // Vérifie si l'e-mail existe déjà dans la base de données
+    $sql_check_email = "SELECT COUNT(*) FROM utilisateurs WHERE mail_utilisateur = ?";
+    $query_check_email = $this->bdd->prepare($sql_check_email);
+    $query_check_email->execute([$mail_utilisateur]);
+    $email_exists = $query_check_email->fetchColumn();
+
+    if ($email_exists) {
+        // L'e-mail existe déjà, retourne un message d'erreur
+        return "L'utilisateur avec cet e-mail existe déjà.";
+    } else {
+        // L'e-mail n'existe pas, procède à l'insertion et retourne un message de succès
+        $sql_insert_user = "INSERT INTO utilisateurs (nom_utilisateur, prenom_utilisateur, mail_utilisateur, tel_utilisateur) VALUES (?, ?, ?, ?)";
+        $query_insert_user = $this->bdd->prepare($sql_insert_user);
+        $query_insert_user->execute([$nom_utilisateur, $prenom_utilisateur, $mail_utilisateur, $tel_utilisateur]);
+        return "Utilisateur ajouté avec succès!";
+    }
+} 
+
 
 }
-  
-    
 ?>
 
