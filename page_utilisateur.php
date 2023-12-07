@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 require_once("dao.php");
 $dao = new DAO();
@@ -25,8 +26,6 @@ if ($_POST) {
     }
 }
 
-
-
 ?>
 
 <!DOCTYPE html>
@@ -45,18 +44,18 @@ if ($_POST) {
 <body>
 <nav class="navbar navbar-expand-lg bg-dark mb-5">
         <div class="container-fluid">
-            <a class="navbar-brand text-white" href="LoginPage.php">MyBiblio</a>
+            <a class="navbar-brand text-white" href="">MyBiblio</a>
 
             <div class="collapse navbar-collapse " id="navbarSupportedContent">
 
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <?php if (isset($_SESSION['email']) == true) { ?>
                         <li class="nav-item">
-                            <a class="nav-link active text-white" aria-current="page" href="#">Membres</a>
+                            <a class="nav-link active text-secondary" aria-current="page" href="page_utilisateur.php">Membres</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-secondary" href="#">Livres</a>
+                            <a class="nav-link text-white" href="index.php">Livres</a>
                         </li>
                     <?php } ?>
                 </ul>
@@ -76,20 +75,20 @@ if ($_POST) {
 
 <form method="POST">
 
-<h2> Nouvelle Utilisateur </h2>
+        <h2> Nouvelle Utilisateur </h2>
 
-<input type="text" name="nom_utilisateur" placeholder="Nom" required />
-<input type="text" name="prenom_utilisateur" placeholder="Prénom" required />
-<input type="mail" name="mail_utilisateur" placeholder="Mail" required />
-<input type="text" name="tel_utilisateur" placeholder="Téléphone" required />
+        <input type="text" name="nom_utilisateur" placeholder="Nom" required />
+        <input type="text" name="prenom_utilisateur" placeholder="Prénom" required />
+        <input type="mail" name="mail_utilisateur" placeholder="Mail" required />
+        <input type="text" pattern="^0[1-9] \d{2} \d{2} \d{2} \d{2}$" name="tel_utilisateur" placeholder="Téléphone" required />
 
-<button name="btn_add_user" type="submit">Ajouter</button>
+        <button name="btn_add_user" type="submit">Ajouter</button>
 
-<div id="messageDiv">
-    <?php echo isset($message) ? $message : ''; ?>
-</div>
+        <div id="messageDiv">
+            <?php echo isset($message) ? $message : ''; ?>
+        </div>
 
-</form>
+    </form>
 
 
     <table id="tableUser" class="table display">
@@ -109,13 +108,13 @@ if ($_POST) {
                     <td><?php echo $user['prenom_utilisateur']; ?></td>
                     <td><?php echo $user['identifiant_utilisateur']; ?></td>
                     <td>
-                        <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#livreModal<?php echo $user['id_utilisateur']; ?>">
+                        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#livreModal<?php echo $user['id_utilisateur']; ?>">
                             Fiche personnelle
                         </button>
                     </td>
-                    <form method="POST" action="suppr.php">
+                    <form method="POST" action="suppr_user.php">
                         <td>
-                            <button <?php echo $user['id_utilisateur']; ?>" class="btn btn-danger" data-toggle="modal" data-target="#confirmModal">Supprimer</button>
+                            <button <?php echo $user['id_utilisateur']; ?> class="btn btn-dark" data-toggle="modal" data-target="#confirmModal">Supprimer</button>
                         </td>
                     </form>
                 </tr>
@@ -136,10 +135,13 @@ if ($_POST) {
                                 <?php if ($LivreEmprunte['id_utilisateur'] == $user['id_utilisateur']) { ?>
                                     <p>Livre emprunté : <?php echo $LivreEmprunte['titre_livre']; ?></p>
                                     <p>date d'emprunt : <?php echo $LivreEmprunte['date_emprunt']; ?></p>
-                                    <p>date de retour: <?php echo $LivreEmprunte['date_retour']; ?></p>
+                                    <p>date de retour: <?php echo $LivreEmprunte['date_retour']; ?> </p>
+                           
+                                    </form> <?php } ?>
                                     <?php $aucunLivreEmprunte = false; ?>
                                 <?php } ?>
                             <?php } ?>
+                           
 
                             <?php if ($aucunLivreEmprunte) { ?>
                                 <p>Aucun livre emprunté</p>
@@ -152,7 +154,7 @@ if ($_POST) {
                     </div>
                 </div>
 
-            <?php } ?>
+
 
         </tbody>
     </table>
