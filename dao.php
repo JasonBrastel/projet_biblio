@@ -474,8 +474,12 @@ class DAO
 
     // Retourner le tableau des statuts de disponibilité
     return $statusArray;
+
 }
-        }
+
+
+}
+  
     
 ?>
 

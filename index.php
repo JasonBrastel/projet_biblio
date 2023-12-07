@@ -16,12 +16,14 @@ if ($_POST) {
     $dao->ajoutLivre();
     $dao->getAuteursbyName($_POST['nom_auteur']);
     $dao->getGenreByName($_POST['genre']);
+
     $dao->getIsbn($_POST['isbn']);
    
 
 }
 $selectGenre = $dao-> getGenre();
 $selectAuteur = $dao-> getAuteurDatalist();
+
 
 ?>
 
@@ -69,6 +71,7 @@ $selectAuteur = $dao-> getAuteurDatalist();
             </div>
         </div>
     </nav>
+
 
     <section class="container mt-5">
     <h1 class="text-center mb-4">Ajout de livres :</h1>
@@ -119,6 +122,7 @@ $selectAuteur = $dao-> getAuteurDatalist();
         </div>
 
     </form>
+
 </section>
     <div class="container mt-3 ">
 
