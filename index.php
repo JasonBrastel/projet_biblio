@@ -113,7 +113,7 @@ $selectAuteur = $dao-> getAuteurDatalist();
                     <th>Image</th>
                     <th>Titre</th>
                     <th>ISBN</th>
-                    <th>Résumé</th>
+                    <th>Genre</th>
                     <th>Bouton</th>
                     <th>Disponibilité</th>
                 </tr>
