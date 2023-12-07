@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once("dao.php");
+
 $dao = new DAO();
 $dao->connexion();
 $livres = $dao->getLivre();
@@ -11,6 +12,15 @@ $dispoStatus = $dao->statusDispo();
 $id_livre = $dao->get_livre();
 $liste_utilisateur = $dao->getUtilisateur();
 
+if ($_POST) {
+    $dao->ajoutLivre();
+    $dao->getAuteursbyName($_POST['nom_auteur']);
+    $dao->getGenreByName($_POST['genre']);
+
+    $dao->getIsbn($_POST['isbn']);
+}
+$selectGenre = $dao->getGenre();
+$selectAuteur = $dao->getAuteurDatalist();
 
 
 
@@ -30,7 +40,7 @@ $liste_utilisateur = $dao->getUtilisateur();
 </head>
 
 
-
+<body>
 
 
     <nav class="navbar navbar-expand-lg bg-dark mb-5">
@@ -61,7 +71,59 @@ $liste_utilisateur = $dao->getUtilisateur();
         </div>
     </nav>
 
+    <section class="container mt-5">
+    <h1 class="text-center mb-4">Ajout de livres :</h1>
+    <form method="POST">
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <input type="text" name="titre_livre" class="form-control" placeholder="Titre du livre" required />
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="isbn" class="form-control" placeholder="ISBN" required />
+            </div>
+            <div class="col-md-3">
+                <input type="text" list="choix_auteur" name="nom_auteur" class="form-control" placeholder="Nom de l'auteur" required />
+                <datalist id="choix_auteur">
+                    <?php foreach ($selectAuteur as $row) { ?>
+                        <option value="<?php print $row['nom_auteur']; ?>"><?php print $row['nom_auteur']; ?></option>
+                    <?php } ?>
+                </datalist>
+            </div>
+            <div class="col-md-3">
+                <input type="date" name="date_parution" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <input type="text" name="nombrePage" class="form-control" placeholder="Nombre de pages" required />
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="long_description" class="form-control" placeholder="Description longue" />
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="short_description" class="form-control" placeholder="Description courte" />
+            </div>
+            <div class="col-md-3">
+                <select name="genre" class="form-control">
+                    <?php foreach ($selectGenre as $livre) { ?>
+                        <option value="<?php print $livre["id_genre"] ?>"><?php print $livre["nom_genre"] ?> </option>
+                    <?php } ?>
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 text-center mt-2">
+                <button class="btn btn-dark " name="btn_ajouter" type="submit" >Ajouter</button>
+            </div>
+        </div>
+
+    </form>
+</section>
     <div class="container mt-3 ">
+
+
         <table id="example" class="table ">
             <thead>
                 <tr>
@@ -112,7 +174,7 @@ $liste_utilisateur = $dao->getUtilisateur();
                                     <p>Description: <?php echo $livre['shortDescription']; ?></p>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Fermer</button>
                                 </div>
                             </div>
                         </div>
@@ -140,35 +202,34 @@ $liste_utilisateur = $dao->getUtilisateur();
             </tbody>
         </table>
 
-        <section>
-
-
-            <form method="POST" action="emprunt.php">
-                <select name="utilisateur">
+        <section class="container mt-5">
+    <div class="row">
+        <article class="col-md-6">
+            <form method="POST" action="emprunt.php" class="d-flex justify-content-center align-items-center flex-column">
+                <select name="utilisateur" class="form-select mb-3">
                     <?php foreach ($liste_utilisateur as $utilisateur) { ?>
                         <option value="<?php print $utilisateur["id_utilisateur"] ?>"><?php print $utilisateur["nom_utilisateur"];
                                                                                         print " ";
                                                                                         print $utilisateur["prenom_utilisateur"] ?> </option>
                     <?php } ?>
                 </select>
-                <input type="text" list="choix_livre_emprunt" name="liste_livre">
+
+                <input type="text" list="choix_livre_emprunt" name="liste_livre_emprunt" class="form-control mb-3" placeholder="Titre du livre">
                 <datalist id="choix_livre_emprunt">
                     <?php foreach ($id_livre as $book) {
                         if ($book['disponibilite_id'] == 0) { ?>
-                            <option value="<?php print $book['id_livre'] ?>"><?php print $book['titre_livre'] ?></option>
+                            <option value="<?php print $book['titre_livre'] ?>"><?php print $book['titre_livre'] ?></option>
                     <?php  }
                     } ?>
-
                 </datalist>
-                <button type="submit" id="btn_emprunt" name="btn_emprunt">Valider l'emprunt</button>
 
+                <button type="submit" id="btn_emprunt" name="btn_emprunt" class="btn btn-dark">Valider l'emprunt</button>
             </form>
+        </article>
 
-
-
-
-            <form method="POST" action="rendu.php">
-                <select name="utilisateur">
+        <article class="col-md-6">
+            <form method="POST" action="rendu.php" class="d-flex justify-content-center align-items-center flex-column">
+                <select name="utilisateur" class="form-select mb-3">
                     <?php foreach ($liste_utilisateur as $utilisateur) { ?>
                         <option value="<?php print $utilisateur["id_utilisateur"] ?>"><?php print $utilisateur["nom_utilisateur"];
                                                                                         print " ";
@@ -176,63 +237,68 @@ $liste_utilisateur = $dao->getUtilisateur();
                     <?php } ?>
                 </select>
 
-
-                <input type="text" list="choix_livre_rendu" name="liste_livre">
+                <input type="text" list="choix_livre_rendu" name="liste_livre_rendu" class="form-control mb-3" placeholder="Titre du livre">
                 <datalist id="choix_livre_rendu">
                     <?php foreach ($id_livre as $book) {
                         if ($book['disponibilite_id'] == 1) { ?>
-                            <option value="<?php print $book['id_livre'] ?>"><?php print $book['titre_livre'] ?></option>
-                    <?php  } else {
-                        }
+                            <option value="<?php print $book['titre_livre'] ?>"><?php print $book['titre_livre'] ?></option>
+                    <?php  }
                     } ?>
-
                 </datalist>
-                <button type="submit" id="btn_rendu" name="btn_rendu">Valider le retour</button>
 
+                <button type="submit" id="btn_rendu" name="btn_rendu" class="btn btn-dark">Valider le retour</button>
             </form>
+        </article>
+    </div>
+</section>
 
 
-        </section>
-      
-      <!-- Footer -->
-       <footer class="navbar navbar-expand-lg bg-dark text-white mt-5 ">
-           <div class="container-fluid d-flex justify-content-center ">
-            <span class="navbar-brand text-white fs-6 text"> MyBiblio - 2023 </span>
-            </div>
-        </footer>
 
-        <script src="./script/script.js"></script>
-        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-        <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-        <script>
-            $(document).ready(function() {
-                $('#example').DataTable({
-                    language: {
-                        url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json',
-                    }
-                });
-                var theHREF;
 
-                $(".confirmModalLink").click(function(e) {
-                    e.preventDefault();
-                    theHREF = $(this).attr("href");
-                    $("#confirmModal").modal("show");
-                });
-
-                $("#confirmModalNo").click(function(e) {
-                    $("#confirmModal").modal("hide");
-                });
-
-                $("#confirmModalYes").click(function(e) {
-                    window.location.href = theHREF;
-                });
-            });
-        </script>
-        <?php $dao->disconnect(); ?>
     </div>
 
+    <!-- Footer -->
+    <footer class="navbar navbar-expand-lg bg-dark text-white mt-5 ">
+        <div class="container-fluid d-flex justify-content-center ">
+            <span class="navbar-brand text-white fs-6 text"> MyBiblio - 2023 </span>
+        </div>
+    </footer>
+
+
+    <script src="./script/script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#example').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/fr-FR.json',
+                }
+            });
+            var theHREF;
+
+            $(".confirmModalLink").click(function(e) {
+                e.preventDefault();
+                theHREF = $(this).attr("href");
+                $("#confirmModal").modal("show");
+            });
+
+            $("#confirmModalNo").click(function(e) {
+                $("#confirmModal").modal("hide");
+            });
+
+            $("#confirmModalYes").click(function(e) {
+                window.location.href = theHREF;
+            });
+        });
+    </script>
+    <?php $dao->disconnect(); ?>
+
+
 </body>
+
 
 </html>

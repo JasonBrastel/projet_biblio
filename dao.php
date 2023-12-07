@@ -84,6 +84,23 @@ class DAO
             return $declaration->fetchAll();
         }
     }
+
+    public function getAlone($requete, $param)
+    {
+
+        $resultat = array();
+
+        $declaration = $this->bdd->prepare($requete);
+
+        if (!$declaration) {
+
+            $this->error = $this->bdd->erreurInformation();
+            return false;
+        } else {
+            $declaration->execute($param);
+            return $declaration->fetch();
+        }
+    }
     //FONCTION POUR RECUPERER IBSN DES LIVRES
     function getIsbn($isbn){
 
@@ -98,6 +115,14 @@ class DAO
 
         $sql="SELECT id_livre, titre_livre, disponibilite_id FROM `livres`";
         return $this->getResultat($sql);
+        
+    }
+
+
+    function get_livre_emprunt($param = []){
+
+        $sql="SELECT * FROM `livres` where titre_livre = :inputTitre";
+        return $this->getAlone($sql, $param);
         
     }
 
@@ -194,7 +219,7 @@ class DAO
                 $last_id_livre = $this->bdd->lastInsertId();
 
                 //J'insere dans la table livres_genres
-                $sql3="INSERT INTO livres_genres (`id_livre`,`id_genre`) VALUES (?,?)";
+                $sql3="INSERT INTO livres_genres (`livre_id`,`genre_id`) VALUES (?,?)";
 
                 $query = $this->bdd->prepare($sql3);
                 $query->execute([$last_id_livre,$genre]);
@@ -208,7 +233,7 @@ class DAO
                 $query =$this->bdd->prepare($sql5);
                 $query->execute([$_POST['quantity']]);
 
-                header('location:ajoutlivre.php');
+                header('location:index.php');
 
                 //Comptage des lignes a l'issu de la requete inclu dans la fonction "getIsbn" SI le resultat est 0, c'est que l'ISBN n'existe pas dans la BDD donc le livre peut etre ajouté
                 } elseif (count($this->getIsbn(($_POST['isbn']))) == 0) {
@@ -218,7 +243,7 @@ class DAO
     
                     $last_id_livre = $this->bdd->lastInsertId();
     
-                    $sql3="INSERT INTO livres_genres (`id_livre`,`id_genre`) VALUES (?,?)";
+                    $sql3="INSERT INTO livres_genres (`livre_id`,`genre_id`) VALUES (?,?)";
                     $query =$this->bdd->prepare($sql3);
                     $query->execute([$last_id_livre,$genre]);
                     
@@ -230,11 +255,11 @@ class DAO
                     $query->execute([$_POST['quantity']]);
                 
 
-                header('location:ajoutlivre.php');
+                header('location:index.php');
 
                 //Comptage des lignes a l'issu de la requete inclu dans la fonction "getIsbn" SI le resultat est différent de 0 , c'est que l'ISBN existe dans la BDD 
                 } elseif (count($this->getIsbn(($_POST['isbn']))) != 0) {
-                print("Le livre existe deja dans la BDD");
+                
                 }
 
                 //Comptage des lignes a l'issu de la requete inclu dans la fonction "getAuteursByName" SI le resultat est différent de 0, c'est que l'auteur existe deja, donc on ajoute tout sauf l'auteur
@@ -255,7 +280,7 @@ class DAO
                 $query =$this->bdd->prepare($sql5);
                 $query->execute([$_POST['quantity']]);
 
-                header('location:ajoutlivre.php');
+                header('location:index.php');
 
             }   
         }     
@@ -263,14 +288,16 @@ class DAO
 
 
 
-    function emprunt_livre(){
-        
-        if(isset($_POST['liste_livre'])){
+
+    function emprunt_livre($param){
+
+
+        if(isset($_POST['liste_livre_emprunt'])){
 
            
         
-            $idlivre = $_POST['liste_livre'];
-            $sql="UPDATE livres SET disponibilite_id = 1 WHERE id_livre LIKE $idlivre";
+            $idlivre = $param;
+            $sql="UPDATE livres SET disponibilite_id = 1 WHERE id_livre = $idlivre";
             $this->bdd->query($sql);
             $id_util = $_POST['utilisateur'];
             $sql1="INSERT INTO livre_utilisateur (`id_livre`,`id_utilisateur`) VALUES (?,?)";
@@ -282,13 +309,13 @@ class DAO
                
         }
     
-        function rendu_livre(){
+        function rendu_livre($param){
 
 
-            if(isset($_POST['liste_livre'])){
+            if(isset($_POST['liste_livre_rendu'])){
    
-                $idlivre = $_POST['liste_livre'];
-                $sql="UPDATE livres SET disponibilite_id = 0 WHERE id_livre LIKE $idlivre";
+                $idlivre = $param;
+                $sql="UPDATE livres SET disponibilite_id = 0 WHERE id_livre = $idlivre";
                 $this->bdd->query($sql);
                 $id_util = $_POST['utilisateur'];
 
@@ -392,12 +419,9 @@ class DAO
         return $this->getMailMdp($sql);                                             //on retourne le résultat de la requête                                  
     }
 
+   
 
 
-
-
-
-    
 
  //PAUL 
    // fonction changment de status de la dispo dans datatable 
@@ -423,6 +447,6 @@ class DAO
     return $statusArray;
 }
 
-
+}
 ?>
 
