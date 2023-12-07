@@ -1,14 +1,4 @@
-.dispo {
-    background-color: green !important;
-    color: white !important;
-    opacity: 80% !important;
-}
 
-.non-dispo {
-    background-color: red !important;
-    color: white !important;
-    opacity: 80% !important ;
-}
 
 .details-btn{
     width: 150px !important;
