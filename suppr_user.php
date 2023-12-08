@@ -7,16 +7,16 @@ require_once("dao.php");                                          //on fait la j
 $dao = new DAO();                                                        //on crée une nouvelle instance de DAO
 $dao->connexion();                                                       //on se connecte à la BDD            
 
-$id_livress = $dao->get_livre_emprunt(["inputTitre" => $_POST['liste_livre_rendu']]);
 
-if (isset($_POST['btn_rendu'])){ 
 
-    $dao->rendu_livre($id_livress['id_livre']); 
-   
+if (isset($_POST['btn_suppr_user'])){ 
 
-}
-header('location:page_livre.php'); 
 
-$dao->disconnect(); 
+    $dao->suppr_utilisateur($_POST['btn_suppr_user']); }
+header('location:page_utilisateur.php');    
+
+
+$dao->disconnect();  
+
 ob_end_flush();
 ?>

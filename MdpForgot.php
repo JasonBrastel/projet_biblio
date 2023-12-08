@@ -1,4 +1,6 @@
 <?php 
+ob_start();
+
 session_start();                                                          //on démarre la session pour pouvoir utiliser les variables de session
 require_once("dao.php");                                             //on fait la jonction avec le fichier DAO
 $dao = new DAO();                                                         //on crée une nouvelle instance de DAO
@@ -25,16 +27,14 @@ if (isset($_POST['button_send']) && (($_SERVER['REQUEST_METHOD'] === 'POST'))) {
 
 if ($result > 0)  {                                                                //si l'email existe dans la BDD c'est-à-dire si le résultat de la fonction checkMail est supérieur à 0                         
     $dao->addToken($email, $token_hash, $expiry);                                  //on ajoute le token dans la BDD avec la fonction addToken
-    // $dao->sendMail($email, $token, $expiry);                                    //on envoie le mail avec le token et la fonction mail 
+    //$dao->sendMail($email, $token, $expiry);                                    //on envoie le mail avec le token et la fonction mail 
     $SendMailValide = "Un mail vous a été envoyé, vérifiez votre adresse.";                                       //on affiche un message de confirmation                                                                           
   } else {
     $ErrorMail = "Aucun compte est associé à cette adresse électronique";          //on affiche un message d'erreur si l'email n'existe pas dans la BDD
   }
 
 }
-
-
-
+ob_end_flush();
 ?>
 
 
@@ -98,18 +98,20 @@ if ($result > 0)  {                                                             
 
 <nav class="navbar navbar-expand-lg bg-dark mb-5">
             <div class="container-fluid">
-                <a class="navbar-brand text-white" href="#">MyBiblio</a>
+                <a class="navbar-brand text-white" >MyBiblio</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse " id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active text-white" aria-current="page" href="#"></a>
+                            <a class="nav-link active text-white" aria-current="page" ></a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="index.php"></a>
+
+                            <a class="nav-link text-white" ></a>
+
                         </li>
                     </ul>
 

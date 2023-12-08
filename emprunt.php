@@ -1,6 +1,5 @@
-
-
 <?php 
+ob_start();
 session_start();                                                       //on démarre la session pour pouvoir utiliser les variables de session
 require_once("dao.php");                                          //on fait la jonction avec le fichier DAO
                                     
@@ -13,5 +12,8 @@ if (isset($_POST['btn_emprunt'])){
 
     $dao->emprunt_livre($id_livress['id_livre']); }
 
-header('location:index.php');    
-?>
+header('location:page_livre.php');    
+$dao->disconnect(); 
+
+ob_end_flush();
+  ?>
