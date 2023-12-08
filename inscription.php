@@ -212,7 +212,7 @@ if (isset($_POST['button_register']) && ($_SERVER['REQUEST_METHOD'] === 'POST'))
                                     <div class="col-auto mb-5">
                                         <div class="input-group">
                                             <div style="border: none;" class="input-group-text"><span class="material-symbols-outlined">lock</span></div>
-                                            <input style="border: none;" type="password" class="form-control" id="pass2" name="pass2" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Veuillez confirmer votre mot de passe" placeholder="Confirmez le mot de passe" required>
+                                            <input style="border: none;" type="password" class="form-control" id="pass2" name="pass2" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" title="Veuillez confirmer votre mot de passe" placeholder="Confirmez le mot de passe" required>
                                         </div>
                                         <span style="color:red;"><?php echo  $messageErrorMDP  ?></span> <br>
                                         <input type="checkbox" class="mt-5 ms-3" onclick="filtreMdp()"> Afficher les mots de passe
@@ -235,7 +235,7 @@ if (isset($_POST['button_register']) && ($_SERVER['REQUEST_METHOD'] === 'POST'))
                                         <button type="submit" name="button_register" class="boutonInsc btn btn btn-lg gradient-custom-4 text-body  ">S'inscrire</button>
                                     </div>
                                     <!-- lien pour se connecter si on a déjà un compte: -->
-                                    <p class="text-center text-muted mt-4 mb-0">Vous avez déjà un compte ? <a href="LoginPage.php" class="fw-bold text-body"><u>Se connecter</u></a></p>
+                                    <p class="text-center text-muted mt-4 mb-0">Vous avez déjà un compte ? <a href="index.php" class="fw-bold text-body"><u>Se connecter</u></a></p>
 
                                 </form>
 

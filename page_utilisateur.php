@@ -73,28 +73,44 @@ if ($_POST) {
                 <?php } ?>
             </div>
         </div>
-    </nav>
-<section>
 
+</nav>
 
+<section class="container mt-5">
+    <h1 class="text-center mb-4">Ajout d'utilisateur :</h1>
+    <form method="POST">
+        <div class="row mb-3 d-flex justify-content-center">
+            <div class="col-md-2">
+                <input type="text" name="nom_utilisateur" class="form-control" placeholder="Nom" title="Veuillez indiquer le nom de l'utilisateur à enregistrer" required />
+            </div>
+            <div class="col-md-2">
+                <input type="text" name="prenom_utilisateur" class="form-control" placeholder="Prénom" title="Veuillez indiquer le prénom de l'utilisateur à enregistrer" required />
+            </div>
+        </div>
 
-<form method="POST">
+        <div class="row mb-3 d-flex justify-content-center">
+            <div class="col-md-2">
+                <input type="email" name="mail_utilisateur" class="form-control" placeholder="Mail" title="Veuillez indiquer l'adresse mail de l'utilisateur à enregistrer" required />
+            </div>
+            <div class="col-md-2">
+                <input type="text" pattern="^0[1-9] \d{2} \d{2} \d{2} \d{2}$" name="tel_utilisateur" title="Veuillez indiquer le numéro de l'utilisateur (avec espaces) à enregistrer" class="form-control" placeholder="Tel: 00 00 00 00 00" required />
+            </div>
+        </div>
 
-<h2> Nouvelle Utilisateur </h2>
+        <div class="row">
+            <div class="col-md-12 text-center mt-2">
+                <button class="btn btn-dark" name="btn_add_user" type="submit">Ajouter</button>
+            </div>
+        </div>
 
-<input type="text" name="nom_utilisateur" placeholder="Nom" required />
-<input type="text" name="prenom_utilisateur" placeholder="Prénom" required />
-<input type="mail" name="mail_utilisateur" placeholder="Mail" required />
-<input type="text" pattern="^0[1-9] \d{2} \d{2} \d{2} \d{2}$" name="tel_utilisateur" placeholder="00 00 00 00 00" required />
+        <div id="messageDiv" class="mt-3 text-center">
+            <?php echo isset($message) ? $message : ''; ?>
+        </div>
+    </form>
+</section>
 
+   
 
-<button name="btn_add_user" type="submit">Ajouter</button>
-
-<div id="messageDiv">
-    <?php echo isset($message) ? $message : ''; ?>
-</div>
-
-</form>
 
 
     <table id="tableUser" class="table display">
