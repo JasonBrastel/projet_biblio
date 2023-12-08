@@ -149,7 +149,7 @@ ob_end_flush();
                                     <div class="col-auto mb-5">
                                         <div class="input-group">
                                             <div style="border: none;" class="input-group-text"><span class="material-symbols-outlined">lock</span></div>
-                                            <input style="border: none;" type="password" class="form-control" id="pass" name="pass" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Votre mot de passe doit contenir au moins un chiffre, une majuscule, une minuscule et au moins 6 caractères" placeholder="Mot de passe..." required>
+                                            <input style="border: none;" type="password" class="form-control" id="pass" name="pass" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" title="Votre mot de passe doit contenir au moins un chiffre, une majuscule, une minuscule et au moins 6 caractères" placeholder="Mot de passe..." required>
                                         </div>
                                         <input type="checkbox" class="mt-5 ms-3" onclick="filtreMdp()"> Afficher le mot de passe
                                         
