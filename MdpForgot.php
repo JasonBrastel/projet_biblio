@@ -1,4 +1,6 @@
 <?php 
+ob_start();
+
 session_start();                                                          //on démarre la session pour pouvoir utiliser les variables de session
 require_once("dao.php");                                             //on fait la jonction avec le fichier DAO
 $dao = new DAO();                                                         //on crée une nouvelle instance de DAO
@@ -25,16 +27,14 @@ if (isset($_POST['button_send']) && (($_SERVER['REQUEST_METHOD'] === 'POST'))) {
 
 if ($result > 0)  {                                                                //si l'email existe dans la BDD c'est-à-dire si le résultat de la fonction checkMail est supérieur à 0                         
     $dao->addToken($email, $token_hash, $expiry);                                  //on ajoute le token dans la BDD avec la fonction addToken
-    // $dao->sendMail($email, $token, $expiry);                                    //on envoie le mail avec le token et la fonction mail 
+    //$dao->sendMail($email, $token, $expiry);                                    //on envoie le mail avec le token et la fonction mail 
     $SendMailValide = "Un mail vous a été envoyé, vérifiez votre adresse.";                                       //on affiche un message de confirmation                                                                           
   } else {
     $ErrorMail = "Aucun compte est associé à cette adresse électronique";          //on affiche un message d'erreur si l'email n'existe pas dans la BDD
   }
 
 }
-
-
-
+ob_end_flush();
 ?>
 
 

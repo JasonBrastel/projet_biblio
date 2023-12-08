@@ -1,8 +1,14 @@
 <?php
+ob_start();
+
+$message = isset($_GET['message']) ? urldecode($_GET['message']) : '';       // Si le paramètre 'message' est présent dans la requête GET, décode sa valeur, sinon initialise $message à une chaîne vide
+
 session_start();                                              //on démarre la session pour pouvoir utiliser les variables de session
 if (! isset($_SESSION['email'])) {                            //si la variable de session n'existe pas c'est-à-dire si l'utilisateur n'est pas connecté
     header('Location: index.php');                        //on redirige vers la page de connexion
 }
+
+
 
 require_once("dao.php");
 $dao = new DAO();
@@ -21,16 +27,22 @@ if ($_POST) {
         $prenom_utilisateur = $_POST['prenom_utilisateur'];
         $mail_utilisateur = $_POST['mail_utilisateur'];
         $tel_utilisateur = $_POST['tel_utilisateur'];
+
+
+
         $message = $dao->ajoutUtilisateur($nom_utilisateur, $prenom_utilisateur, $mail_utilisateur, $tel_utilisateur);
+        if (!empty($message)) {
+            $_SESSION['message'] = $message;
+        }
 
-
-        // Mise à jour du contenu de la div des messages
-        echo '<script>document.getElementById("messageDiv").innerHTML = "' . $message . '";</script>';
+        // Redirection
+        header('Location: page_utilisateur.php');
+        exit;
     }
 }
 
 
-
+ob_end_flush();
 ?>
 
 <!DOCTYPE html>
@@ -49,14 +61,14 @@ if ($_POST) {
 <body>
 <nav class="navbar navbar-expand-lg bg-dark mb-5">
         <div class="container-fluid">
-            <a class="navbar-brand text-white" href="">MyBiblio</a>
+            <a class="navbar-brand text-secondary" href="">MyBiblio</a>
 
             <div class="collapse navbar-collapse " id="navbarSupportedContent">
 
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <?php if (isset($_SESSION['email']) == true) { ?>
                         <li class="nav-item">
-                            <a class="nav-link active text-secondary" aria-current="page" href="page_utilisateur.php">Membres</a>
+                            <a class="nav-link active text-white" aria-current="page" href="page_utilisateur.php">Membres</a>
                         </li>
 
                         <li class="nav-item">
@@ -77,41 +89,48 @@ if ($_POST) {
 </nav>
 
 <section class="container mt-5">
-    <h1 class="text-center mb-4">Ajout d'utilisateur :</h1>
-    <form method="POST">
-        <div class="row mb-3 d-flex justify-content-center">
-            <div class="col-md-2">
-                <input type="text" name="nom_utilisateur" class="form-control" placeholder="Nom" title="Veuillez indiquer le nom de l'utilisateur à enregistrer" required />
+        <h1 class="text-center mb-4">Ajout d'utilisateur :</h1>
+        <form method="POST">
+            <div class="row mb-3 d-flex justify-content-center">
+                <div class="col-md-2">
+                    <input type="text" name="nom_utilisateur" pattern="[A-Za-z]+" class="form-control" placeholder="Nom" title="Veuillez indiquer le nom de l'utilisateur à enregistrer" required />
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="prenom_utilisateur" pattern="[A-Za-z]+" class="form-control" placeholder="Prénom" title="Veuillez indiquer le prénom de l'utilisateur à enregistrer" required />
+                </div>
             </div>
-            <div class="col-md-2">
-                <input type="text" name="prenom_utilisateur" class="form-control" placeholder="Prénom" title="Veuillez indiquer le prénom de l'utilisateur à enregistrer" required />
+
+            <div class="row mb-3 d-flex justify-content-center">
+                <div class="col-md-2">
+                    <input type="email" name="mail_utilisateur" class="form-control" placeholder="Mail" title="Veuillez indiquer l'adresse mail de l'utilisateur à enregistrer" required />
+                </div>
+                <div class="col-md-2">
+                    <input type="text" pattern="^0[1-9] \d{2} \d{2} \d{2} \d{2}$|^0[1-9]\d{2}\d{2}\d{2}\d{2}$" name="tel_utilisateur" title="Veuillez indiquer le numéro de l'utilisateur (avec ou sans espaces) à enregistrer" class="form-control" placeholder="Tel: 00 00 00 00 00" required />
+                </div>
             </div>
-        </div>
 
-        <div class="row mb-3 d-flex justify-content-center">
-            <div class="col-md-2">
-                <input type="email" name="mail_utilisateur" class="form-control" placeholder="Mail" title="Veuillez indiquer l'adresse mail de l'utilisateur à enregistrer" required />
+            <div class="row">
+                <div class="col-md-12 text-center mt-2">
+                    <button class="btn btn-dark" name="btn_add_user" type="submit">Ajouter</button>
+                </div>
             </div>
-            <div class="col-md-2">
-                <input type="text" pattern="^0[1-9] \d{2} \d{2} \d{2} \d{2}$" name="tel_utilisateur" title="Veuillez indiquer le numéro de l'utilisateur (avec espaces) à enregistrer" class="form-control" placeholder="Tel: 00 00 00 00 00" required />
-            </div>
-        </div>
 
-        <div class="row">
-            <div class="col-md-12 text-center mt-2">
-                <button class="btn btn-dark" name="btn_add_user" type="submit">Ajouter</button>
-            </div>
-        </div>
-
-        <div id="messageDiv" class="mt-3 text-center">
-            <?php echo isset($message) ? $message : ''; ?>
-        </div>
-    </form>
-</section>
-
-   
+            <?php if (!empty($_SESSION['message'])) : ?>
+                <div id="messageDiv" class="mt-3 text-center">
+                    <?php echo $_SESSION['message']; ?>
+                </div>
+            <?php
+                // Nettoyer la variable de session après l'avoir affichée
+                unset($_SESSION['message']);
+            endif;
+            ?>
 
 
+        </form>
+    </section>
+
+
+<div class="container">
 
     <table id="tableUser" class="table display">
         <thead>
@@ -134,11 +153,12 @@ if ($_POST) {
                             Fiche personnelle
                         </button>
                     </td>
+                    <td>
                     <form method="POST" action="suppr_user.php">
-                        <td>
-                            <button <?php echo $user['id_utilisateur']; ?> class="btn btn-dark" data-toggle="modal" data-target="#confirmModal">Supprimer</button>
+                                <button id="btn_suppr_user" type="submit" name="btn_suppr_user" value="<?php echo $user['id_utilisateur']; ?>" class="btn btn-dark details-btn" data-bs-toggle="modal" data-bs-target="#confirmModal">Supprimer</button>
+                            </form>
                         </td>
-                    </form>
+
                 </tr>
 
                 <div class="modal fade" id="livreModal<?php echo $user['id_utilisateur']; ?>" tabindex="-1" role="dialog" aria-labelledby="livreModalLabel<?php echo $user['id_utilisateur']; ?>">
@@ -177,7 +197,7 @@ if ($_POST) {
 
         </tbody>
     </table>
-    
+</div>
       <!-- Footer -->
       <footer class="navbar navbar-expand-lg bg-dark text-white fixed-bottom">
     <div class="container-fluid d-flex justify-content-center">

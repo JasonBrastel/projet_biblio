@@ -1,4 +1,6 @@
 <?php
+ob_start();
+
 session_start();                                    //on démarre la session pour pouvoir utiliser les variables de session
 if (! isset($_SESSION['email'])) {                  //si la variable de session n'existe pas ( si l'utilisateur n'est pas connecté)
     header('Location: index.php');              //on redirige vers la page de connexion
@@ -28,7 +30,7 @@ if ($_POST) {
 $selectGenre = $dao-> getGenre();
 $selectAuteur = $dao-> getAuteurDatalist();
 
-
+ob_end_flush();
 ?>
 
 <!DOCTYPE html>
@@ -56,11 +58,11 @@ $selectAuteur = $dao-> getAuteurDatalist();
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <?php if (isset($_SESSION['email']) == true) { ?>
                         <li class="nav-item">
-                            <a class="nav-link active text-white" aria-current="page" href="page_utilisateur.php">Membres</a>
+                            <a class="nav-link active text-secondary" aria-current="page" href="page_utilisateur.php">Membres</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-secondary" href="page_livre.php">Livres</a>
+                            <a class="nav-link text-white" href="page_livre.php">Livres</a>
                         </li>
                     <?php } ?>
                 </ul>

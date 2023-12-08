@@ -1,4 +1,5 @@
 <?php
+ob_start();
 session_start();
                                                    
 require_once("dao.php");                                             //on fait la jonction avec le fichier DAO
@@ -37,7 +38,7 @@ if (isset($_POST['button_register']) && (($_SERVER['REQUEST_METHOD'] === 'POST')
     }
 }
 
-
+ob_end_flush();
 ?>
 
 <script>

@@ -1,4 +1,6 @@
 <?php
+ob_start();
+
 session_start();                                                          //on démarre la session pour pouvoir utiliser les variables de session
 require_once("dao.php");
 if (isset($_SESSION['email']) == true) {
@@ -65,6 +67,7 @@ if (isset($_POST['button_register']) && ($_SERVER['REQUEST_METHOD'] === 'POST'))
         }
     }
 }
+ob_end_flush();
 ?>
 
 <script>

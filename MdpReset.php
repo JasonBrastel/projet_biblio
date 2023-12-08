@@ -1,4 +1,5 @@
 <?php
+ob_start();
 session_start();                                                       //on démarre la session pour pouvoir utiliser les variables de session
 require_once("dao.php");                                               //on fait la jonction avec le fichier DAO
 
@@ -6,51 +7,43 @@ $dao = new DAO();                                                      //on cré
 $dao->connexion();                                                     //on se connecte à la BDD            
 
 $messageErrorMDP = "";                                                 //on crée une variable pour stocker les messages d'erreur si les mots de passe ne correspondent pas
-
-
+$messageErrorToken = "";                                                 //on crée une variable pour stocker les messages d'erreur si le token est invalide ou expiré
+$messageValidChangeMdp="";                                              //on crée une variable pour stocker les messages de confirmation si le mot de passe a bien été changé
 
 function valid_donnees($donnees)
 {                                         //on crée une fonction pour sécuriser les données du formulaire                        
     $donnees = htmlentities(stripslashes(trim($donnees)));                //on enlève les espaces, les antislashs et les caractères spéciaux
-    return $donnees;                                                       //on retourne les données sécurisées                                           
+    return $donnees;                                                      //on retourne les données sécurisées                                           
 }
 
-$token= $_GET['token'];                                                 //on récupère le token dans l'url
-$token_hash= hash('sha256', $token);                                    //on hash le token
-$sql = "SELECT * FROM utilisateurs WHERE reset_token_hash = ?";
-// $stmt = $dao->prepare($sql);  //FONCTIONNE PAS
-$stmt->bind_param("s", $token_hash);
-$stmt->execute();
-$result = $stmt->get_result();
 
-if ($result->num_rows > 0) {
-                                                                       // Le token est valide, et les informations de l'utilisateur sont récupérées
-    $user = $result->fetch_assoc();
-} else {
-                                                                       // Le token est invalide ou a expiré, gérez l'erreur (par exemple, redirigez vers une page d'erreur)
-    die("Token invalide ou expiré");
-}                                    
+if (isset($_GET['token']) == true && $_GET['token'] != "") {                                      //si le token existe dans l'url et qu'il n'est pas vide                        
+    if (isset($_POST['button_validation'])) {                                                     //si on clique sur le bouton "valider" 
+        $token = $_GET['token'];                                                                  //on récupère le token dans l'url                                                                       //on affiche le token                                 
+        $result = $dao->CheckInfoToken(["tokenuser" => $token]);                                    //on stocke le résultat de la fonction CheckInfoToken dans une variable   
 
-if (isset($_POST['button_validation']) && ($_SERVER['REQUEST_METHOD'] === 'POST')) {
+        if ($_POST['pass'] != $_POST['pass2']) {                                                 //si les mots de passe ne correspondent pas
+            $messageErrorMDP = "Les mots de passe ne correspondent pas.";                        //on affiche un message d'erreur
+        } elseif ($result > 0) {
+            // Vérification de la validité du token (30 minutes d'expiration)
+            $expiry_time = strtotime($result['reset_token_expires_at']);                         //on stocke la date d'expiration du token dans une variable   
+            if ($expiry_time > time()) {                                                         //si la date d'expiration est supérieure à la date actuelle           
+                $new_password_hash = password_hash($_POST['pass'], PASSWORD_ARGON2ID);           //on hash le nouveau mot de passe 
+                $user_id = $result['id_utilisateur'];                                            //on stocke l'id de l'utilisateur dans une variable   
+                $dao->updatePassword(["mdp_user" => $new_password_hash, "id_user" => $user_id]);     //on met à jour le mot de passe dans la BDD avec la fonction updatePassword                           
 
-    // Mettre à jour le mot de passe de l'utilisateur
-    $new_password_hash = password_hash($_POST['pass'], PASSWORD_ARGON2ID);
-    $user_id = $user['id_utilisateur'];
-
-    $sqlUpdate = "UPDATE utilisateurs SET mdp_utilisateur = ? WHERE id_utilisateur = ?";
-    // $stmtUpdate = $dao->prepare($sqlUpdate); //FONCTIONNE PAS
-    $stmtUpdate->bind_param("ss", $new_password_hash, $user_id);
-    
-    if ($stmtUpdate->execute()) {
-        // Mot de passe mis à jour avec succès
-
-        exit();
-    } else {
-        // Erreur lors de la mise à jour du mot de passe
-        die("Erreur lors de la mise à jour du mot de passe");
+                $messageValidChangeMdp= "Le mot de passe a bien été réinitialisé.";                                                  //on redirige vers la page de connexion
+            } else {
+                $messageErrorToken = "Le lien de réinitialisation du mot de passe a expiré.";      //on affiche un message d'erreur si le token a expiré
+            }
+        } else {
+            $messageErrorToken = "Token invalide.";
+        }
     }
+}else{
+    header('Location: index.php');                                                  //on redirige vers la page de connexion
 }
-
+ob_end_flush();
 ?>
 <script>
     //fonction pour montrer les mots de passe:
@@ -124,18 +117,18 @@ if (isset($_POST['button_validation']) && ($_SERVER['REQUEST_METHOD'] === 'POST'
 
     <nav class="navbar navbar-expand-lg bg-dark mb-5">
         <div class="container-fluid">
-            <a class="navbar-brand text-white" >MyBiblio</a>
+            <a class="navbar-brand text-white">MyBiblio</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse " id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active text-white" aria-current="page" ></a>
+                        <a class="nav-link active text-white" aria-current="page"></a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link text-white" ></a>
+                        <a class="nav-link text-white"></a>
                     </li>
                 </ul>
 
@@ -147,66 +140,67 @@ if (isset($_POST['button_validation']) && ($_SERVER['REQUEST_METHOD'] === 'POST'
 
     <div class="mask d-flex align-items-center h-100 gradient-custom-3">
 
-<div class="container">
+        <div class="container">
 
-    <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
 
-        <div class="col-12 col-md-9 col-lg-7 col-xl-6">
-            <div class="card shadow-lg p-3 mb-5 bg-body rounded" style="border-radius: 15px;">
+                <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+                    <div class="card shadow-lg p-3 mb-5 bg-body rounded" style="border-radius: 15px;">
 
-                <div class="card-body p-5">
+                        <div class="card-body p-5">
 
-                    <h2 style="font-family: 'Poppins', sans-serif; " class="text-uppercase text-center mb-5 fw-bolder">Réinitialisation du mot de passe</h2>
+                            <h2 style="font-family: 'Poppins', sans-serif; " class="text-uppercase text-center mb-5 fw-bolder">Réinitialisation du mot de passe</h2>
 
-                    
-                        <!-- formulaire pour réinitialiser le mot de passe: -->
-                    <form method="POST">
 
-                        <div class="col-auto mb-5">
-                            <div class="input-group">
-                                <div style="border: none;" class="input-group-text"><span class="material-symbols-outlined">key</span></div>
-                                <input style="border: none;" type="password" class="form-control" id="pass" name="pass" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" title="Votre mot de passe doit contenir au moins un chiffre, une majuscule, une minuscule et au moins 6 caractères" placeholder="Nouveau mot de passe" required>
-                            </div>
-                            <!-- on affiche le message d'erreur si les mots de passe ne correspondent pas: -->
-                            <span style="color:red;"><?php echo  $messageErrorMDP  ?></span>
+                            <!-- formulaire pour réinitialiser le mot de passe: -->
+                            <form method="POST">
+
+                                <div class="col-auto mb-5">
+                                    <div class="input-group">
+                                        <div style="border: none;" class="input-group-text"><span class="material-symbols-outlined">key</span></div>
+                                        <input style="border: none;" type="password" class="form-control" id="pass" name="pass" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" title="Votre mot de passe doit contenir au moins un chiffre, une majuscule, une minuscule et au moins 6 caractères" placeholder="Nouveau mot de passe" required>
+                                    </div>
+                                    <!-- on affiche le message d'erreur si les mots de passe ne correspondent pas: -->
+                                    <span style="color:red;"><?php echo  $messageErrorMDP  ?></span>
+                                </div>
+
+                                <div class="col-auto mb-5">
+                                    <div class="input-group">
+                                        <div style="border: none;" class="input-group-text"><span class="material-symbols-outlined">lock</span></div>
+                                        <input style="border: none;" type="password" class="form-control" id="pass2" name="pass2" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" title="Veuillez confirmer votre mot de passe" placeholder="Confirmez le mot de passe" required>
+                                    </div>
+                                    <!-- on affiche le message d'erreur si les mots de passe ne correspondent pas: -->
+                                    <span style="color:red;"><?php echo  $messageErrorMDP  ?></span> <br>
+                                    <input type="checkbox" class="mt-5 ms-3" onclick="filtreMdp()"> Afficher les mots de passe
+                                </div>
+                                <span style="color:red;"><?php echo $messageErrorToken  ?></span> 
+                                <div class="d-flex justify-content-center">
+                                <span style="color:green;"><?php echo $messageValidChangeMdp  ?></span>
+                                </div>
+                                <!-- bouton pour valider le changement de mdp: -->
+
+                                <div class=" d-flex justify-content-center mt-3">
+                                    <button type="submit" name="button_validation" class="boutonInsc btn btn btn-lg gradient-custom-4 text-body  ">Valider</button>
+                                </div>
+                                <!-- lien pour se connecter si on a déjà un compte: -->
+                                <p class="text-center text-muted mt-4 mb-0">Vous avez déjà un compte ? <a href="index.php" class="fw-bold text-body"><u>Se connecter</u></a></p>
+
+                            </form>
+
                         </div>
-
-                        <div class="col-auto mb-5">
-                            <div class="input-group">
-                                <div style="border: none;" class="input-group-text"><span class="material-symbols-outlined">lock</span></div>
-                                <input style="border: none;" type="password" class="form-control" id="pass2" name="pass2" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" title="Veuillez confirmer votre mot de passe" placeholder="Confirmez le mot de passe" required>
-                            </div>
-                             <!-- on affiche le message d'erreur si les mots de passe ne correspondent pas: -->
-                            <span style="color:red;"><?php echo  $messageErrorMDP  ?></span> <br>
-                            <input type="checkbox" class="mt-5 ms-3" onclick="filtreMdp()"> Afficher les mots de passe
-                        </div>
-
-                        
-
-                        <!-- bouton pour valider le changement de mdp: -->
-
-                        <div class=" d-flex justify-content-center mt-3">
-                            <button type="submit" name="button_validation" class="boutonInsc btn btn btn-lg gradient-custom-4 text-body  ">Valider</button>
-                        </div>
-                        <!-- lien pour se connecter si on a déjà un compte: -->
-                        <p class="text-center text-muted mt-4 mb-0">Vous avez déjà un compte ? <a href="index.php" class="fw-bold text-body"><u>Se connecter</u></a></p>
-
-                    </form>
-
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-</div>
-</section>
+    </section>
 
-<!-- Footer -->
-<footer class="navbar navbar-expand-lg bg-dark text-white mt-5 ">
-<div class="container-fluid d-flex justify-content-center ">
-<span class="navbar-brand text-white fs-6 text"> MyBiblio - 2023  </span>
-</div>
-</footer>
+    <!-- Footer -->
+    <footer class="navbar navbar-expand-lg bg-dark text-white mt-5 ">
+        <div class="container-fluid d-flex justify-content-center ">
+            <span class="navbar-brand text-white fs-6 text"> MyBiblio - 2023 </span>
+        </div>
+    </footer>
 
 
 

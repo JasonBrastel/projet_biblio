@@ -235,7 +235,7 @@ class DAO
                 $last_id_auteur = $this->bdd->lastInsertId();
 
                 //j'insere dans la table livres 
-                $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`auteur_id`,`id_genre`) VALUES (?,?,?,?,?,?,?)";    
+                $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`nombrePage`,`auteur_id`,`id_genre`) VALUES (?,?,?,?,?,?)";    
                 $query = $this->bdd->prepare($sql1);
                 $query->execute([NULL,"$titreLivre","$isbn","$dateParution","$nombrePages","$last_id_auteur","$_POST[genre]"]);
 
@@ -262,7 +262,7 @@ class DAO
                 //Comptage des lignes a l'issu de la requete inclu dans la fonction "getIsbn" SI le resultat est 0, c'est que l'ISBN n'existe pas dans la BDD donc le livre peut etre ajouté
                 } elseif (count($this->getIsbn(($_POST['isbn']))) == 0) {
     
-                    $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`auteur_id`,`id_genre`) VALUES (NULL,'".$titreLivre."','".$isbn."','".$dateParution."','".$nombrePages."',(SELECT id_auteur FROM auteurs WHERE nom_auteur LIKE '".$nom_auteur."'),'".$_POST['genre']."')";    
+                    $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`nombrePage`,`auteur_id`,`id_genre`) VALUES (NULL,'".$titreLivre."','".$isbn."','".$nombrePages."',(SELECT id_auteur FROM auteurs WHERE nom_auteur LIKE '".$nom_auteur."'),'".$_POST['genre']."')";    
                     $this->bdd->query($sql1);
     
                     $last_id_livre = $this->bdd->lastInsertId();
@@ -288,7 +288,7 @@ class DAO
 
                 //Comptage des lignes a l'issu de la requete inclu dans la fonction "getAuteursByName" SI le resultat est différent de 0, c'est que l'auteur existe deja, donc on ajoute tout sauf l'auteur
                 elseif (count($this->getAuteursByName($_POST['nom_auteur'])) != 0) {
-                $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`date_parution`,`nombrePage`,`auteur_id`,`id_genre`) VALUES (NULL,'".$titreLivre."','".$isbn."','".$dateParution."','".$nombrePages."',(SELECT id_auteur FROM auteurs WHERE nom_auteur LIKE '".$nom_auteur."'), '".$_POST['genre']."')";
+                $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`nombrePage`,`auteur_id`,`id_genre`) VALUES (NULL,'".$titreLivre."','".$isbn."','".$nombrePages."',(SELECT id_auteur FROM auteurs WHERE nom_auteur LIKE '".$nom_auteur."'), '".$_POST['genre']."')";
                 $this->bdd->query($sql1);
 
                 $last_id_livre = $this->bdd->lastInsertId();
@@ -434,6 +434,10 @@ class DAO
 
     }
 
+    function suppr_utilisateur($id_utilisateur) {
+        $sql= "DELETE FROM utilisateurs WHERE id_utilisateur LIKE $id_utilisateur";
+        $this->bdd->query($sql);
+    }
 
     //-----------------------------------------------------------------------------------------------------DAVID-------------------------------------------------------------------------------------
 
@@ -460,7 +464,7 @@ class DAO
         
         $query = $this->bdd->prepare($sql); 
         $query->execute([$token_hash, $expiry, $email]);
-        
+       
     }
     // Fonction pour envoyer un e-mail de réinitialisation de mot de passe
     public function sendMail($email, $token_hash){
@@ -504,7 +508,17 @@ class DAO
         return $this->getMailMdp($sql);                                             //on retourne le résultat de la requête                                  
     }
 
-   
+    public function CheckInfoToken($param = []) {                                       //fonction pour vérifier si le token existe dans la BDD
+        $sql = "SELECT * FROM utilisateurs WHERE reset_token_hash = :tokenuser";                 //requête SQL pour sélectionner le token dans la BDD
+        $stmt = $this->bdd->prepare($sql);                                              //on prépare la requête SQL
+        $stmt->execute($param);                                                         //on exécute la requête SQL
+        return $stmt->fetch(PDO::FETCH_ASSOC);                                          //on retourne le résultat de la requête
+    }
+    public function updatePassword($param=[]) {                                                        //fonction pour mettre à jour le mot de passe de l'utilisateur
+        $sql = "UPDATE utilisateurs SET mdp_utilisateur = :mdp_user WHERE id_utilisateur = :id_user";  //requête SQL pour update le mdp utilisateur dans la BDD
+        $stmt = $this->bdd->prepare($sql);  
+        $stmt->execute($param);                                                                        //on exécute la requête SQL
+    }
 
 
 
@@ -546,16 +560,12 @@ class DAO
     
         do {
             // Génère un nouvel identifiant utilisateur aléatoire entre 10000 et 999999999
-            $identifiant_utilisateur = mt_rand(10000, 99999999);
+            $identifiant_utilisateur = mt_rand(10000, 999999999);
     
             // Vérifie si le nouvel identifiant existe déjà 
             $query_check_identifiant->execute([$identifiant_utilisateur]);
             $identifiant_exists = $query_check_identifiant->fetchColumn();
-    
-            // Si l'identifiant a été réaffecté, stocke le message
-            if ($identifiant_utilisateur != mt_rand(10000, 999999999)) {
-                $message = "Identifiant réaffecté";
-            }
+
         } while ($identifiant_exists);
     
         // Vérifie si l'e-mail existe déjà dans la base de données
@@ -579,6 +589,7 @@ class DAO
     }
 
 }
+
 
 ?>
 
