@@ -1,14 +1,4 @@
-.dispo {
-    background-color: green !important;
-    color: white !important;
-    opacity: 80% !important;
-}
 
-.non-dispo {
-    background-color: red !important;
-    color: white !important;
-    opacity: 80% !important ;
-}
 
 .details-btn{
     width: 150px !important;
@@ -22,5 +12,10 @@
 
 h1 {
     font-family: 'Roboto Slab', serif;
+}
+
+table img{
+    height: 200px ;
+    width: 150px;
 }
 
