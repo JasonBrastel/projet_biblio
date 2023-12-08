@@ -237,7 +237,7 @@ class DAO
                 //j'insere dans la table livres 
                 $sql1 = "INSERT INTO livres (`id_livre`,`titre_livre`,`isbn`,`nombrePage`,`auteur_id`,`id_genre`) VALUES (?,?,?,?,?,?)";    
                 $query = $this->bdd->prepare($sql1);
-                $query->execute([NULL,"$titreLivre","$isbn","$dateParution","$nombrePages","$last_id_auteur","$_POST[genre]"]);
+                $query->execute([NULL,"$titreLivre","$isbn","$nombrePages","$last_id_auteur","$_POST[genre]"]);
 
                 //je recupere l'ID de la derniere requete INSERT effecutée et je la stocke dans une variable pour pouvoir la réutiliser apres
                 $last_id_livre = $this->bdd->lastInsertId();
