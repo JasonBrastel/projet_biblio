@@ -73,10 +73,8 @@ if ($_POST) {
                 <?php } ?>
             </div>
         </div>
+
 </nav>
-
-
-
 
 <section class="container mt-5">
     <h1 class="text-center mb-4">Ajout d'utilisateur :</h1>
@@ -110,6 +108,8 @@ if ($_POST) {
         </div>
     </form>
 </section>
+
+   
 
 
 
