@@ -23,10 +23,10 @@ $userLivreEmprunte = $dao->getUtilisateurLivreEmprunte();
 if ($_POST) {
     if (isset($_POST['btn_add_user'])) {
         // Traitements pour le formulaire d'ajout d'utilisateur
-        $nom_utilisateur = $_POST['nom_utilisateur'];
-        $prenom_utilisateur = $_POST['prenom_utilisateur'];
-        $mail_utilisateur = $_POST['mail_utilisateur'];
-        $tel_utilisateur = $_POST['tel_utilisateur'];
+        $nom_utilisateur = valid_donnees($_POST['nom_utilisateur']);
+        $prenom_utilisateur = valid_donnees($_POST['prenom_utilisateur']);
+        $mail_utilisateur = valid_donnees($_POST['mail_utilisateur']);
+        $tel_utilisateur = valid_donnees($_POST['tel_utilisateur']);
 
 
 

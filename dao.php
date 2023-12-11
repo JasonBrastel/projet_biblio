@@ -188,8 +188,6 @@ class DAO
     // function getUtilisateur(){
 
 
-
-
     //FONCTION POUR RECUPERER LES NOMS DES AUTEURS 
     function getAuteursByName($name)
     {
@@ -441,6 +439,13 @@ class DAO
 
     //-----------------------------------------------------------------------------------------------------DAVID-------------------------------------------------------------------------------------
 
+
+    //on crée une fonction pour sécuriser les données du formulaire    
+    function valid_donnees($donnees)
+{                                                             
+    $donnees = htmlentities(stripslashes(trim($donnees)));                //on enlève les espaces, les antislashs et les caractères spéciaux
+    return $donnees;                                                       //on retourne les données sécurisées                                           
+}
 
     //fonction pour ajouter des utilisateurs depuis le formulaire d'inscription:
         

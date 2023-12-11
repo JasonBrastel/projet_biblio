@@ -20,10 +20,10 @@ $liste_utilisateur = $dao->getUtilisateur();
 
 if ($_POST) {
     $dao->ajoutLivre();
-    $dao->getAuteursbyName($_POST['nom_auteur']);
-    $dao->getGenreByName($_POST['genre']);
+    $dao->getAuteursbyName(valid_donnees($_POST['nom_auteur']));
+    $dao->getGenreByName(valid_donnees($_POST['genre']));
     
-    $dao->getIsbn($_POST['isbn']);
+    $dao->getIsbn(valid_donnees($_POST['isbn']));
    
 
 }
