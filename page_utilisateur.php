@@ -40,7 +40,11 @@ if ($_POST) {
         exit;
     }
 }
-
+ function valid_donnees($donnees)
+{                                                             
+    $donnees = htmlentities(stripslashes(trim($donnees)));                //on enlève les espaces, les antislashs et les caractères spéciaux
+    return $donnees;                                                       //on retourne les données sécurisées                                           
+}
 
 ob_end_flush();
 ?>
@@ -61,7 +65,7 @@ ob_end_flush();
 <body>
 <nav class="navbar navbar-expand-lg bg-dark mb-5">
         <div class="container-fluid">
-            <a class="navbar-brand text-secondary" href="">MyBiblio</a>
+            <a class="navbar-brand text-white" href="">MyBiblio</a>
 
             <div class="collapse navbar-collapse " id="navbarSupportedContent">
 
@@ -72,7 +76,7 @@ ob_end_flush();
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-white" href="page_livre.php">Livres</a>
+                            <a class="nav-link text-secondary" href="page_livre.php">Livres</a>
                         </li>
                     <?php } ?>
                 </ul>

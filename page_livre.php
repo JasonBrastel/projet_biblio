@@ -20,8 +20,8 @@ $liste_utilisateur = $dao->getUtilisateur();
 
 if ($_POST) {
     $dao->ajoutLivre();
-    $dao->getAuteursbyName(valid_donnees($_POST['nom_auteur']));
-    $dao->getGenreByName(valid_donnees($_POST['genre']));
+    $dao->getAuteursbyName($dao->valid_donnees($_POST['nom_auteur']));
+    $dao->getGenreByName($dao->valid_donnees($_POST['genre']));
     
     $dao->getIsbn(valid_donnees($_POST['isbn']));
    
@@ -29,6 +29,13 @@ if ($_POST) {
 }
 $selectGenre = $dao-> getGenre();
 $selectAuteur = $dao-> getAuteurDatalist();
+
+    function valid_donnees($donnees)
+{                                                             
+    $donnees = htmlentities(stripslashes(trim($donnees)));                //on enlève les espaces, les antislashs et les caractères spéciaux
+    return $donnees;                                                       //on retourne les données sécurisées                                           
+}
+
 
 ob_end_flush();
 ?>
@@ -101,8 +108,9 @@ ob_end_flush();
         </div>
 
         <div class="row mb-3">
-            <div class="col-md-3">
-                <input type="text" name="nombrePage" class="form-control" placeholder="Nombre de pages" required />
+            <div class="col-md-3 d-flex">
+                <input type="text" name="nombrePage" class="form-control me-1" placeholder="Nombre de pages" required />
+                <input type="text" name="quantity" class="form-control" placeholder="Nombre de livres" required />
             </div>
             <div class="col-md-3">
                 <input type="text" name="long_description" class="form-control" placeholder="Description longue" />

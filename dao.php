@@ -8,10 +8,6 @@ class DAO
 	*/
     //paramètres de connexion à la base de donnée
 
-    private $host = "127.0.0.1";
-    private $user = "root";
-    private $password = "";
-    private $database = "biblio";
     private $charset = "utf8";
 
     //instance courante de la connexion
@@ -255,7 +251,7 @@ class DAO
                 $query =$this->bdd->prepare($sql5);
                 $query->execute([$_POST['quantity']]);
 
-                header('location:index.php');
+                header('location:page_livre.php');
 
                 //Comptage des lignes a l'issu de la requete inclu dans la fonction "getIsbn" SI le resultat est 0, c'est que l'ISBN n'existe pas dans la BDD donc le livre peut etre ajouté
                 } elseif (count($this->getIsbn(($_POST['isbn']))) == 0) {
@@ -277,7 +273,7 @@ class DAO
                     $query->execute([$_POST['quantity']]);
                 
 
-                header('location:index.php');
+                header('location:page_livre.php');
 
                 //Comptage des lignes a l'issu de la requete inclu dans la fonction "getIsbn" SI le resultat est différent de 0 , c'est que l'ISBN existe dans la BDD 
                 } elseif (count($this->getIsbn(($_POST['isbn']))) != 0) {
@@ -302,7 +298,7 @@ class DAO
                 $query =$this->bdd->prepare($sql5);
                 $query->execute([$_POST['quantity']]);
 
-                header('location:index.php');
+                header('location:page_livre.php');
 
             }   
         }     
