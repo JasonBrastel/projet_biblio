@@ -8,6 +8,10 @@ class DAO
 	*/
     //paramètres de connexion à la base de donnée
 
+    private $host = "127.0.0.1";
+    private $user = "root";
+    private $password = "";
+    private $database = "biblio";
     private $charset = "utf8";
 
     //instance courante de la connexion
